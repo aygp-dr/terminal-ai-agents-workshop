@@ -1,0 +1,1276 @@
+#+TITLE: Terminal AI Agents Experiments
+#+AUTHOR: aygp-dr
+#+DATE: 2025-09-13
+#+PROPERTY: header-args :mkdirp yes
+
+* Experiments Overview
+
+This directory contains hands-on experiments for exploring existing terminal AI agents and building custom implementations.
+
+* Experiment 1: Claude Code Deep Dive
+
+** Overview
+
+Claude Code (Anthropic) is a terminal-native AI agent with autonomous capabilities and comprehensive tool support.
+
+** Installation and Setup
+
+#+begin_src bash :tangle experiments/01-claude-code-setup.sh
+#!/bin/bash
+# Claude Code setup and exploration
+
+# Check if claude is installed
+if ! command -v claude &> /dev/null; then
+    echo "Installing Claude Code..."
+    # Installation instructions vary by platform
+    echo "Visit: https://github.com/anthropics/claude-code"
+fi
+
+# Verify API key
+if [ -z "$ANTHROPIC_API_KEY" ]; then
+    echo "Please set ANTHROPIC_API_KEY environment variable"
+    exit 1
+fi
+
+echo "Claude Code is ready!"
+#+end_src
+
+** Experiment Tasks
+
+#+begin_src python :tangle experiments/01-claude-code-tasks.py
+"""Claude Code experiment tasks"""
+
+TASKS = [
+    {
+        "id": "CC-1",
+        "name": "File Creation",
+        "prompt": "Create a Python function that calculates factorial recursively",
+        "expected_outcome": "Creates a new .py file with recursive factorial function"
+    },
+    {
+        "id": "CC-2",
+        "name": "Code Analysis",
+        "prompt": "Analyze the project structure and create a dependency graph",
+        "expected_outcome": "Generates visualization of project dependencies"
+    },
+    {
+        "id": "CC-3",
+        "name": "Refactoring",
+        "prompt": "Refactor the factorial function to use memoization",
+        "expected_outcome": "Updates code with memoization decorator"
+    },
+    {
+        "id": "CC-4",
+        "name": "Testing",
+        "prompt": "Write comprehensive unit tests for the factorial function",
+        "expected_outcome": "Creates test file with edge cases"
+    },
+    {
+        "id": "CC-5",
+        "name": "Documentation",
+        "prompt": "Add type hints and docstrings to all functions",
+        "expected_outcome": "Updates code with proper documentation"
+    }
+]
+
+def run_experiment(agent_cmd: str = "claude"):
+    """Run Claude Code experiments"""
+    import subprocess
+    import time
+
+    results = []
+    for task in TASKS:
+        print(f"\n=== {task['id']}: {task['name']} ===")
+        print(f"Prompt: {task['prompt']}")
+
+        start = time.time()
+        # Run the task
+        result = subprocess.run(
+            [agent_cmd, task['prompt']],
+            capture_output=True,
+            text=True
+        )
+        elapsed = time.time() - start
+
+        results.append({
+            "task": task,
+            "time": elapsed,
+            "success": result.returncode == 0
+        })
+
+        print(f"Time: {elapsed:.2f}s")
+        print(f"Success: {result.returncode == 0}")
+
+    return results
+
+if __name__ == "__main__":
+    run_experiment()
+#+end_src
+
+** Observations Template
+
+#+begin_src org :tangle experiments/01-claude-code-observations.org
+#+TITLE: Claude Code Observations
+#+DATE: [Insert Date]
+
+** Strengths
+-
+
+** Weaknesses
+-
+
+** Tool Calling Patterns
+-
+
+** Error Handling
+-
+
+** Performance Metrics
+| Task | Time (s) | Success | Notes |
+|------+----------+---------+-------|
+| CC-1 |          |         |       |
+| CC-2 |          |         |       |
+| CC-3 |          |         |       |
+| CC-4 |          |         |       |
+| CC-5 |          |         |       |
+
+** Key Learnings
+-
+#+end_src
+
+* Experiment 2: Aider Deep Dive
+
+** Overview
+
+Aider is a git-aware AI pair programmer that excels at multi-file edits and understanding project context.
+
+** Installation and Setup
+
+#+begin_src bash :tangle experiments/02-aider-setup.sh
+#!/bin/bash
+# Aider setup and exploration
+
+# Install aider
+pip install aider-chat
+
+# Verify installation
+aider --version
+
+# Initialize git repo if needed
+if [ ! -d .git ]; then
+    git init
+    git add -A
+    git commit -m "Initial commit for aider experiment"
+fi
+
+echo "Aider is ready!"
+#+end_src
+
+** Experiment Tasks
+
+#+begin_src python :tangle experiments/02-aider-tasks.py
+"""Aider experiment tasks"""
+
+TASKS = [
+    {
+        "id": "AID-1",
+        "name": "Multi-file Refactor",
+        "prompt": "/refactor Convert all print statements to logging",
+        "expected_outcome": "Updates multiple files with proper logging"
+    },
+    {
+        "id": "AID-2",
+        "name": "Git Integration",
+        "prompt": "/commit Implement user authentication system",
+        "expected_outcome": "Creates atomic git commits with good messages"
+    },
+    {
+        "id": "AID-3",
+        "name": "Architecture Change",
+        "prompt": "/architect Add caching layer to the application",
+        "expected_outcome": "Proposes and implements caching architecture"
+    },
+    {
+        "id": "AID-4",
+        "name": "Code Review",
+        "prompt": "/review Check for security vulnerabilities",
+        "expected_outcome": "Identifies and fixes security issues"
+    },
+    {
+        "id": "AID-5",
+        "name": "Test Coverage",
+        "prompt": "/test Achieve 90% test coverage",
+        "expected_outcome": "Writes tests to improve coverage"
+    }
+]
+
+def run_aider_experiment():
+    """Run Aider-specific experiments"""
+    import subprocess
+    import os
+
+    # Aider-specific setup
+    os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY", "")
+
+    results = []
+    for task in TASKS:
+        print(f"\n=== {task['id']}: {task['name']} ===")
+
+        # Aider uses different command structure
+        cmd = ["aider", "--message", task['prompt'], "--yes"]
+
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        results.append({
+            "task": task,
+            "output": result.stdout[:500]  # First 500 chars
+        })
+
+    return results
+
+if __name__ == "__main__":
+    run_aider_experiment()
+#+end_src
+
+* Experiment 3: Amp (Sourcegraph) Deep Dive
+
+** Overview
+
+Amp uses unconstrained tokens approach, allowing for extensive context and complex operations.
+
+** Setup
+
+#+begin_src bash :tangle experiments/03-amp-setup.sh
+#!/bin/bash
+# Amp setup
+
+# Install amp
+npm install -g @sourcegraph/amp
+
+# Verify
+amp --version
+
+echo "Amp is ready!"
+#+end_src
+
+** Experiment Tasks
+
+#+begin_src python :tangle experiments/03-amp-tasks.py
+"""Amp experiment tasks - focusing on large context operations"""
+
+TASKS = [
+    {
+        "id": "AMP-1",
+        "name": "Large Codebase Analysis",
+        "prompt": "Analyze entire codebase and identify duplicate code patterns",
+        "context_size": "unlimited"
+    },
+    {
+        "id": "AMP-2",
+        "name": "Cross-file Refactoring",
+        "prompt": "Implement dependency injection across all modules",
+        "context_size": "unlimited"
+    },
+    {
+        "id": "AMP-3",
+        "name": "Architecture Documentation",
+        "prompt": "Generate complete architecture documentation from code",
+        "context_size": "unlimited"
+    }
+]
+
+def measure_context_handling():
+    """Test Amp's unlimited context capabilities"""
+    # Implementation specific to Amp's unique features
+    pass
+#+end_src
+
+* Experiment 4: Gemini CLI Deep Dive
+
+** Overview
+
+Gemini CLI (Google) provides multimodal capabilities and efficient processing with the Gemini model family.
+
+** Installation and Setup
+
+#+begin_src bash :tangle experiments/04-gemini-setup.sh
+#!/bin/bash
+# Gemini CLI setup
+
+# Install Gemini CLI
+pip install google-generativeai
+
+# Or using the CLI tool if available
+# npm install -g @google/gemini-cli
+
+# Verify API key
+if [ -z "$GEMINI_API_KEY" ]; then
+    echo "Please set GEMINI_API_KEY environment variable"
+    exit 1
+fi
+
+echo "Gemini CLI is ready!"
+#+end_src
+
+** Experiment Tasks
+
+#+begin_src python :tangle experiments/04-gemini-tasks.py
+"""Gemini CLI experiment tasks - focusing on multimodal capabilities"""
+
+import google.generativeai as genai
+import os
+
+TASKS = [
+    {
+        "id": "GEM-1",
+        "name": "Code Generation",
+        "prompt": "Generate a REST API with FastAPI for user management",
+        "expected_outcome": "Complete API with models, routes, and validation"
+    },
+    {
+        "id": "GEM-2",
+        "name": "Image Analysis",
+        "prompt": "Analyze this architecture diagram and generate code structure",
+        "multimodal": True,
+        "expected_outcome": "Code structure matching the diagram"
+    },
+    {
+        "id": "GEM-3",
+        "name": "Code Translation",
+        "prompt": "Convert this Python code to TypeScript with proper types",
+        "expected_outcome": "Type-safe TypeScript implementation"
+    },
+    {
+        "id": "GEM-4",
+        "name": "Performance Optimization",
+        "prompt": "Optimize this code for better performance",
+        "expected_outcome": "Optimized code with benchmarks"
+    },
+    {
+        "id": "GEM-5",
+        "name": "Security Analysis",
+        "prompt": "Audit this code for security vulnerabilities",
+        "expected_outcome": "Security report with fixes"
+    }
+]
+
+def run_gemini_experiment():
+    """Run Gemini-specific experiments"""
+    # Configure Gemini
+    genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+    model = genai.GenerativeModel('gemini-pro')
+
+    results = []
+    for task in TASKS:
+        print(f"\n=== {task['id']}: {task['name']} ===")
+
+        try:
+            response = model.generate_content(task['prompt'])
+            results.append({
+                "task": task,
+                "response": response.text[:500]
+            })
+        except Exception as e:
+            results.append({
+                "task": task,
+                "error": str(e)
+            })
+
+    return results
+
+if __name__ == "__main__":
+    run_gemini_experiment()
+#+end_src
+
+* Experiment 5: OpenHands Deep Dive
+
+** Overview
+
+OpenHands (formerly OpenDevin) provides full development capabilities with autonomous agent features.
+
+** Installation and Setup
+
+#+begin_src bash :tangle experiments/05-openhands-setup.sh
+#!/bin/bash
+# OpenHands setup
+
+# Clone and install OpenHands
+git clone https://github.com/All-Hands-AI/OpenHands.git
+cd OpenHands
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Start the server
+# python -m openhands.server
+
+echo "OpenHands is ready!"
+#+end_src
+
+** Experiment Tasks
+
+#+begin_src python :tangle experiments/05-openhands-tasks.py
+"""OpenHands experiment tasks - full development capabilities"""
+
+TASKS = [
+    {
+        "id": "OH-1",
+        "name": "Full Feature Implementation",
+        "prompt": "Implement complete user authentication with JWT",
+        "expected_outcome": "Working auth system with tests"
+    },
+    {
+        "id": "OH-2",
+        "name": "Bug Fixing",
+        "prompt": "Find and fix all bugs in this codebase",
+        "expected_outcome": "Fixed bugs with explanations"
+    },
+    {
+        "id": "OH-3",
+        "name": "Database Migration",
+        "prompt": "Migrate from SQLite to PostgreSQL",
+        "expected_outcome": "Complete migration with data integrity"
+    },
+    {
+        "id": "OH-4",
+        "name": "CI/CD Pipeline",
+        "prompt": "Set up complete CI/CD pipeline with GitHub Actions",
+        "expected_outcome": "Working pipeline with tests and deployment"
+    },
+    {
+        "id": "OH-5",
+        "name": "Performance Profiling",
+        "prompt": "Profile and optimize application performance",
+        "expected_outcome": "Performance improvements with metrics"
+    }
+]
+
+def run_openhands_experiment():
+    """Run OpenHands experiments"""
+    import requests
+
+    # Assuming OpenHands server is running
+    base_url = "http://localhost:3000/api"
+
+    results = []
+    for task in TASKS:
+        print(f"\n=== {task['id']}: {task['name']} ===")
+
+        try:
+            response = requests.post(
+                f"{base_url}/execute",
+                json={"prompt": task['prompt']}
+            )
+            results.append({
+                "task": task,
+                "response": response.json()
+            })
+        except Exception as e:
+            results.append({
+                "task": task,
+                "error": str(e)
+            })
+
+    return results
+
+if __name__ == "__main__":
+    run_openhands_experiment()
+#+end_src
+
+* Experiment 6: Building Our Custom Agent
+
+** Overview
+
+Design and implement a custom terminal AI agent with specific capabilities tailored to our workflow.
+
+** Agent Architecture
+
+#+begin_src python :tangle experiments/06-custom-agent.py
+"""Custom Terminal AI Agent Implementation"""
+
+import os
+import json
+import asyncio
+from typing import Dict, Any, List, Optional
+from dataclasses import dataclass, field
+from enum import Enum
+import anthropic
+
+class ToolType(Enum):
+    FILE_OP = "file_operation"
+    SHELL = "shell_command"
+    WEB = "web_search"
+    ANALYSIS = "code_analysis"
+    MEMORY = "context_memory"
+
+@dataclass
+class AgentConfig:
+    """Configuration for our custom agent"""
+    model: str = "claude-3-sonnet-20240229"
+    max_tokens: int = 4096
+    temperature: float = 0.7
+    tool_timeout: int = 30
+    memory_size: int = 10
+    auto_commit: bool = False
+    verbose: bool = True
+
+@dataclass
+class ToolCall:
+    """Represents a tool invocation"""
+    tool_type: ToolType
+    tool_name: str
+    parameters: Dict[str, Any]
+    result: Optional[str] = None
+    error: Optional[str] = None
+    execution_time: float = 0.0
+
+@dataclass
+class ConversationTurn:
+    """Single turn in conversation"""
+    role: str
+    content: str
+    tool_calls: List[ToolCall] = field(default_factory=list)
+    timestamp: float = field(default_factory=lambda: time.time())
+
+class CustomAgent:
+    """Our custom terminal AI agent with enhanced capabilities"""
+
+    def __init__(self, config: AgentConfig):
+        self.config = config
+        self.client = self._init_llm_client()
+        self.tools = self._register_tools()
+        self.memory = []
+        self.context = {}
+
+    def _init_llm_client(self):
+        """Initialize LLM client based on config"""
+        api_key = os.getenv("ANTHROPIC_API_KEY")
+        if not api_key:
+            raise ValueError("API key not found")
+        return anthropic.Anthropic(api_key=api_key)
+
+    def _register_tools(self) -> Dict[str, Any]:
+        """Register all available tools"""
+        tools = {}
+
+        # File operations
+        tools["read_file"] = {
+            "type": ToolType.FILE_OP,
+            "description": "Read contents of a file",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string", "description": "File path"}
+                },
+                "required": ["path"]
+            },
+            "function": self._read_file
+        }
+
+        tools["write_file"] = {
+            "type": ToolType.FILE_OP,
+            "description": "Write content to a file",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string"},
+                    "content": {"type": "string"}
+                },
+                "required": ["path", "content"]
+            },
+            "function": self._write_file
+        }
+
+        # Shell operations
+        tools["execute_command"] = {
+            "type": ToolType.SHELL,
+            "description": "Execute shell command",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "command": {"type": "string"},
+                    "timeout": {"type": "integer", "default": 30}
+                },
+                "required": ["command"]
+            },
+            "function": self._execute_command
+        }
+
+        # Code analysis
+        tools["analyze_code"] = {
+            "type": ToolType.ANALYSIS,
+            "description": "Analyze code structure and quality",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string"},
+                    "metrics": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "default": ["complexity", "dependencies", "quality"]
+                    }
+                },
+                "required": ["path"]
+            },
+            "function": self._analyze_code
+        }
+
+        # Memory operations
+        tools["save_context"] = {
+            "type": ToolType.MEMORY,
+            "description": "Save important context for later",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "key": {"type": "string"},
+                    "value": {"type": "string"}
+                },
+                "required": ["key", "value"]
+            },
+            "function": self._save_context
+        }
+
+        tools["recall_context"] = {
+            "type": ToolType.MEMORY,
+            "description": "Recall saved context",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "key": {"type": "string"}
+                },
+                "required": ["key"]
+            },
+            "function": self._recall_context
+        }
+
+        return tools
+
+    async def _read_file(self, path: str) -> str:
+        """Read file contents"""
+        try:
+            with open(path, 'r') as f:
+                return f.read()
+        except Exception as e:
+            return f"Error reading file: {e}"
+
+    async def _write_file(self, path: str, content: str) -> str:
+        """Write content to file"""
+        try:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, 'w') as f:
+                f.write(content)
+            return f"Successfully wrote to {path}"
+        except Exception as e:
+            return f"Error writing file: {e}"
+
+    async def _execute_command(self, command: str, timeout: int = 30) -> str:
+        """Execute shell command with timeout"""
+        import subprocess
+        try:
+            result = subprocess.run(
+                command,
+                shell=True,
+                capture_output=True,
+                text=True,
+                timeout=timeout
+            )
+            return f"stdout:\n{result.stdout}\nstderr:\n{result.stderr}"
+        except subprocess.TimeoutExpired:
+            return f"Command timed out after {timeout} seconds"
+        except Exception as e:
+            return f"Error executing command: {e}"
+
+    async def _analyze_code(self, path: str, metrics: List[str]) -> str:
+        """Analyze code metrics"""
+        import ast
+        import os
+
+        analysis = {"path": path, "metrics": {}}
+
+        if "complexity" in metrics:
+            # Simple cyclomatic complexity
+            analysis["metrics"]["complexity"] = self._calculate_complexity(path)
+
+        if "dependencies" in metrics:
+            # Extract imports
+            analysis["metrics"]["dependencies"] = self._extract_dependencies(path)
+
+        if "quality" in metrics:
+            # Basic quality checks
+            analysis["metrics"]["quality"] = self._check_quality(path)
+
+        return json.dumps(analysis, indent=2)
+
+    def _calculate_complexity(self, path: str) -> int:
+        """Calculate cyclomatic complexity"""
+        # Simplified implementation
+        with open(path, 'r') as f:
+            tree = ast.parse(f.read())
+
+        complexity = 1  # Base complexity
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.If, ast.For, ast.While, ast.ExceptHandler)):
+                complexity += 1
+        return complexity
+
+    def _extract_dependencies(self, path: str) -> List[str]:
+        """Extract import dependencies"""
+        with open(path, 'r') as f:
+            tree = ast.parse(f.read())
+
+        imports = []
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                imports.extend(alias.name for alias in node.names)
+            elif isinstance(node, ast.ImportFrom):
+                imports.append(node.module)
+        return imports
+
+    def _check_quality(self, path: str) -> Dict[str, Any]:
+        """Basic code quality checks"""
+        with open(path, 'r') as f:
+            lines = f.readlines()
+
+        return {
+            "line_count": len(lines),
+            "has_docstrings": any('"""' in line or "'''" in line for line in lines),
+            "has_type_hints": any('->' in line or ': ' in line for line in lines),
+            "max_line_length": max(len(line) for line in lines)
+        }
+
+    async def _save_context(self, key: str, value: str) -> str:
+        """Save context for later use"""
+        self.context[key] = value
+        return f"Saved context: {key}"
+
+    async def _recall_context(self, key: str) -> str:
+        """Recall saved context"""
+        return self.context.get(key, f"No context found for key: {key}")
+
+    async def process_message(self, user_input: str) -> str:
+        """Process user message with tool support"""
+        # Add to memory
+        self.memory.append(ConversationTurn("user", user_input))
+
+        # Prepare messages for LLM
+        messages = self._prepare_messages()
+
+        # Get LLM response with tools
+        tools_schema = [
+            {
+                "name": name,
+                "description": tool["description"],
+                "input_schema": tool["parameters"]
+            }
+            for name, tool in self.tools.items()
+        ]
+
+        response = self.client.messages.create(
+            model=self.config.model,
+            messages=messages,
+            tools=tools_schema,
+            max_tokens=self.config.max_tokens,
+            temperature=self.config.temperature
+        )
+
+        # Process tool calls if any
+        if hasattr(response, 'tool_calls') and response.tool_calls:
+            tool_results = await self._execute_tools(response.tool_calls)
+
+            # Get final response with tool results
+            messages.append({
+                "role": "assistant",
+                "content": response.content
+            })
+            messages.append({
+                "role": "user",
+                "content": f"Tool results: {json.dumps(tool_results)}"
+            })
+
+            final_response = self.client.messages.create(
+                model=self.config.model,
+                messages=messages,
+                max_tokens=self.config.max_tokens
+            )
+
+            return final_response.content
+
+        return response.content
+
+    def _prepare_messages(self) -> List[Dict[str, str]]:
+        """Prepare messages with memory window"""
+        messages = []
+
+        # System prompt
+        messages.append({
+            "role": "system",
+            "content": "You are a helpful terminal AI agent with tool-calling capabilities."
+        })
+
+        # Add conversation history (with memory limit)
+        history = self.memory[-self.config.memory_size:]
+        for turn in history:
+            messages.append({
+                "role": turn.role,
+                "content": turn.content
+            })
+
+        return messages
+
+    async def _execute_tools(self, tool_calls: List) -> List[Dict]:
+        """Execute requested tools"""
+        results = []
+
+        for call in tool_calls:
+            tool_name = call.name
+            if tool_name in self.tools:
+                tool = self.tools[tool_name]
+                try:
+                    # Execute tool function
+                    result = await tool["function"](**call.input)
+                    results.append({
+                        "tool": tool_name,
+                        "success": True,
+                        "result": result
+                    })
+                except Exception as e:
+                    results.append({
+                        "tool": tool_name,
+                        "success": False,
+                        "error": str(e)
+                    })
+            else:
+                results.append({
+                    "tool": tool_name,
+                    "success": False,
+                    "error": f"Unknown tool: {tool_name}"
+                })
+
+        return results
+
+    def run_interactive(self):
+        """Run interactive REPL"""
+        print("🤖 Custom Terminal AI Agent")
+        print("Type 'quit' to exit, 'help' for commands\n")
+
+        while True:
+            try:
+                user_input = input("> ")
+
+                if user_input.lower() in ['quit', 'exit']:
+                    print("Goodbye!")
+                    break
+
+                if user_input.lower() == 'help':
+                    self._show_help()
+                    continue
+
+                if user_input.lower() == 'tools':
+                    self._show_tools()
+                    continue
+
+                if user_input.lower() == 'context':
+                    self._show_context()
+                    continue
+
+                # Process with agent
+                response = asyncio.run(self.process_message(user_input))
+                print(f"\n{response}\n")
+
+            except KeyboardInterrupt:
+                print("\nInterrupted. Type 'quit' to exit.")
+            except Exception as e:
+                print(f"Error: {e}")
+
+    def _show_help(self):
+        """Show help information"""
+        print("""
+Available commands:
+  help     - Show this help
+  tools    - List available tools
+  context  - Show saved context
+  quit     - Exit the agent
+
+Otherwise, type your request and the agent will assist you.
+        """)
+
+    def _show_tools(self):
+        """Show available tools"""
+        print("\nAvailable tools:")
+        for name, tool in self.tools.items():
+            print(f"  {name}: {tool['description']}")
+
+    def _show_context(self):
+        """Show saved context"""
+        if self.context:
+            print("\nSaved context:")
+            for key, value in self.context.items():
+                print(f"  {key}: {value[:50]}...")
+        else:
+            print("\nNo saved context")
+
+# CLI entry point
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Custom Terminal AI Agent")
+    parser.add_argument("--model", default="claude-3-sonnet-20240229")
+    parser.add_argument("--temperature", type=float, default=0.7)
+    parser.add_argument("--verbose", action="store_true")
+
+    args = parser.parse_args()
+
+    config = AgentConfig(
+        model=args.model,
+        temperature=args.temperature,
+        verbose=args.verbose
+    )
+
+    agent = CustomAgent(config)
+    agent.run_interactive()
+#+end_src
+
+** Testing Our Agent
+
+#+begin_src python :tangle experiments/06-test-custom-agent.py
+"""Test suite for custom agent"""
+
+import pytest
+import asyncio
+from experiments.custom_agent import CustomAgent, AgentConfig, ToolType
+
+@pytest.fixture
+def agent():
+    """Create test agent instance"""
+    config = AgentConfig(verbose=False)
+    return CustomAgent(config)
+
+@pytest.mark.asyncio
+async def test_file_operations(agent, tmp_path):
+    """Test file read/write operations"""
+    test_file = tmp_path / "test.txt"
+    test_content = "Hello, Agent!"
+
+    # Write file
+    result = await agent._write_file(str(test_file), test_content)
+    assert "Successfully" in result
+
+    # Read file
+    content = await agent._read_file(str(test_file))
+    assert content == test_content
+
+@pytest.mark.asyncio
+async def test_command_execution(agent):
+    """Test shell command execution"""
+    result = await agent._execute_command("echo 'Hello World'")
+    assert "Hello World" in result
+
+@pytest.mark.asyncio
+async def test_context_memory(agent):
+    """Test context save/recall"""
+    await agent._save_context("test_key", "test_value")
+    result = await agent._recall_context("test_key")
+    assert result == "test_value"
+
+@pytest.mark.asyncio
+async def test_code_analysis(agent, tmp_path):
+    """Test code analysis capabilities"""
+    test_file = tmp_path / "test.py"
+    test_file.write_text("""
+def factorial(n):
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1)
+    """)
+
+    result = await agent._analyze_code(
+        str(test_file),
+        ["complexity", "dependencies", "quality"]
+    )
+
+    assert "complexity" in result
+    assert "dependencies" in result
+    assert "quality" in result
+
+def test_tool_registration(agent):
+    """Test that all tools are properly registered"""
+    assert len(agent.tools) > 0
+
+    for name, tool in agent.tools.items():
+        assert "type" in tool
+        assert "description" in tool
+        assert "parameters" in tool
+        assert "function" in tool
+#+end_src
+
+* Experiment 7: Agent Comparison Matrix
+
+** Comprehensive Comparison
+
+#+begin_src python :tangle experiments/07-comparison-matrix.py
+"""Compare all agents on standardized tasks"""
+
+import time
+import subprocess
+import json
+from typing import Dict, List, Any
+from dataclasses import dataclass
+
+@dataclass
+class AgentProfile:
+    name: str
+    command: str
+    strengths: List[str]
+    weaknesses: List[str]
+    best_use_cases: List[str]
+
+AGENTS = [
+    AgentProfile(
+        name="Claude Code",
+        command="claude",
+        strengths=["Autonomous", "Comprehensive tools", "Context awareness"],
+        weaknesses=["Requires API key", "Cost per token"],
+        best_use_cases=["Complex refactoring", "Documentation", "Testing"]
+    ),
+    AgentProfile(
+        name="Aider",
+        command="aider",
+        strengths=["Git integration", "Multi-file edits", "Commit messages"],
+        weaknesses=["Limited autonomy", "Requires git"],
+        best_use_cases=["Code review", "Refactoring", "Git workflow"]
+    ),
+    AgentProfile(
+        name="Amp",
+        command="amp",
+        strengths=["Unlimited context", "Fast", "No token limits"],
+        weaknesses=["Less mature", "Limited tools"],
+        best_use_cases=["Large codebases", "Architecture", "Analysis"]
+    ),
+    AgentProfile(
+        name="Gemini CLI",
+        command="gemini",
+        strengths=["Multimodal", "Fast inference", "Google integration"],
+        weaknesses=["Limited tools", "Less mature CLI"],
+        best_use_cases=["Image analysis", "Code translation", "Quick tasks"]
+    ),
+    AgentProfile(
+        name="OpenHands",
+        command="openhands",
+        strengths=["Full autonomy", "Complex tasks", "Self-improving"],
+        weaknesses=["Resource intensive", "Setup complexity"],
+        best_use_cases=["Full features", "Long tasks", "Infrastructure"]
+    ),
+    AgentProfile(
+        name="Custom Agent",
+        command="python experiments/06-custom-agent.py",
+        strengths=["Customizable", "Extensible", "Domain-specific"],
+        weaknesses=["Requires development", "Limited by implementation"],
+        best_use_cases=["Specific workflows", "Integration", "Automation"]
+    )
+]
+
+BENCHMARK_TASKS = [
+    {
+        "id": "T1",
+        "name": "Simple Code Generation",
+        "prompt": "Create a binary search function",
+        "complexity": "Low",
+        "files_affected": 1
+    },
+    {
+        "id": "T2",
+        "name": "Multi-file Refactoring",
+        "prompt": "Extract common code into utilities module",
+        "complexity": "Medium",
+        "files_affected": 5
+    },
+    {
+        "id": "T3",
+        "name": "Architecture Design",
+        "prompt": "Design a caching layer for the application",
+        "complexity": "High",
+        "files_affected": 10
+    },
+    {
+        "id": "T4",
+        "name": "Test Generation",
+        "prompt": "Write comprehensive tests for all modules",
+        "complexity": "Medium",
+        "files_affected": 8
+    },
+    {
+        "id": "T5",
+        "name": "Documentation",
+        "prompt": "Generate API documentation from code",
+        "complexity": "Low",
+        "files_affected": 1
+    }
+]
+
+class AgentBenchmark:
+    """Benchmark framework for comparing agents"""
+
+    def __init__(self):
+        self.results = {}
+
+    def run_benchmark(self, agent: AgentProfile, task: Dict) -> Dict[str, Any]:
+        """Run a single benchmark task"""
+        print(f"Running {task['name']} with {agent.name}...")
+
+        start_time = time.time()
+
+        try:
+            # Run the agent command
+            result = subprocess.run(
+                f"{agent.command} '{task['prompt']}'",
+                shell=True,
+                capture_output=True,
+                text=True,
+                timeout=60
+            )
+
+            execution_time = time.time() - start_time
+
+            return {
+                "agent": agent.name,
+                "task": task["id"],
+                "success": result.returncode == 0,
+                "execution_time": execution_time,
+                "output_length": len(result.stdout),
+                "error": result.stderr if result.returncode != 0 else None
+            }
+
+        except subprocess.TimeoutExpired:
+            return {
+                "agent": agent.name,
+                "task": task["id"],
+                "success": False,
+                "execution_time": 60,
+                "error": "Timeout"
+            }
+        except Exception as e:
+            return {
+                "agent": agent.name,
+                "task": task["id"],
+                "success": False,
+                "execution_time": 0,
+                "error": str(e)
+            }
+
+    def run_all_benchmarks(self):
+        """Run all benchmarks for all agents"""
+        for agent in AGENTS:
+            agent_results = []
+
+            for task in BENCHMARK_TASKS:
+                result = self.run_benchmark(agent, task)
+                agent_results.append(result)
+
+            self.results[agent.name] = agent_results
+
+    def generate_report(self) -> str:
+        """Generate comparison report"""
+        report = "# Agent Comparison Report\n\n"
+
+        # Summary table
+        report += "## Performance Summary\n\n"
+        report += "| Agent | Avg Time (s) | Success Rate | Best Task | Worst Task |\n"
+        report += "|-------|-------------|--------------|-----------|------------|\n"
+
+        for agent_name, results in self.results.items():
+            successful = [r for r in results if r["success"]]
+            avg_time = sum(r["execution_time"] for r in results) / len(results)
+            success_rate = len(successful) / len(results) * 100
+
+            best_task = min(results, key=lambda x: x["execution_time"])["task"]
+            worst_task = max(results, key=lambda x: x["execution_time"])["task"]
+
+            report += f"| {agent_name} | {avg_time:.2f} | {success_rate:.0f}% | {best_task} | {worst_task} |\n"
+
+        # Detailed results
+        report += "\n## Detailed Results\n\n"
+
+        for task in BENCHMARK_TASKS:
+            report += f"### {task['name']} (Complexity: {task['complexity']})\n\n"
+            report += "| Agent | Time (s) | Success | Notes |\n"
+            report += "|-------|----------|---------|-------|\n"
+
+            for agent_name, results in self.results.items():
+                task_result = next(r for r in results if r["task"] == task["id"])
+                success = "✓" if task_result["success"] else "✗"
+                notes = task_result.get("error", "")[:30] if not task_result["success"] else ""
+
+                report += f"| {agent_name} | {task_result['execution_time']:.2f} | {success} | {notes} |\n"
+
+            report += "\n"
+
+        # Recommendations
+        report += "## Recommendations\n\n"
+        report += self._generate_recommendations()
+
+        return report
+
+    def _generate_recommendations(self) -> str:
+        """Generate usage recommendations based on results"""
+        recommendations = ""
+
+        for agent in AGENTS:
+            recommendations += f"### {agent.name}\n\n"
+            recommendations += f"**Best for:** {', '.join(agent.best_use_cases)}\n\n"
+            recommendations += f"**Strengths:** {', '.join(agent.strengths)}\n\n"
+            recommendations += f"**Consider when:** "
+
+            # Analyze results to provide specific recommendations
+            agent_results = self.results.get(agent.name, [])
+            if agent_results:
+                best_complexity = self._get_best_complexity(agent.name)
+                recommendations += f"Working with {best_complexity} complexity tasks\n\n"
+
+        return recommendations
+
+    def _get_best_complexity(self, agent_name: str) -> str:
+        """Determine which complexity level the agent handles best"""
+        results = self.results[agent_name]
+
+        complexity_scores = {"Low": [], "Medium": [], "High": []}
+
+        for result in results:
+            task = next(t for t in BENCHMARK_TASKS if t["id"] == result["task"])
+            if result["success"]:
+                complexity_scores[task["complexity"]].append(result["execution_time"])
+
+        # Find complexity with best average time
+        best_complexity = "Low"
+        best_avg = float('inf')
+
+        for complexity, times in complexity_scores.items():
+            if times:
+                avg = sum(times) / len(times)
+                if avg < best_avg:
+                    best_avg = avg
+                    best_complexity = complexity
+
+        return best_complexity
+
+if __name__ == "__main__":
+    benchmark = AgentBenchmark()
+
+    print("Starting agent comparison benchmark...")
+    benchmark.run_all_benchmarks()
+
+    report = benchmark.generate_report()
+
+    # Save report
+    with open("experiments/benchmark_report.md", "w") as f:
+        f.write(report)
+
+    print("\nBenchmark complete! Report saved to benchmark_report.md")
+    print("\n" + report)
+#+end_src
+
+* Next Steps
+
+1. Complete all experiments in order
+2. Document observations for each agent
+3. Customize the custom agent for specific needs
+4. Run the comparison benchmark
+5. Share findings and contribute improvements
