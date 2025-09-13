@@ -1,0 +1,315 @@
+#+TITLE: Terminal AI Agents Research Reading List
+#+AUTHOR: aygp-dr
+#+DATE: 2025-09-13
+#+PROPERTY: header-args :mkdirp yes
+#+STARTUP: overview
+
+* Overview
+
+Comprehensive reading list for understanding terminal AI agents, covering foundational research, tool-calling capabilities, code generation, and software engineering applications.
+
+* Core AI Agent Foundations
+
+** ReAct: Reasoning and Acting Paradigm
+
+*** ReAct: Synergizing Reasoning and Acting in Language Models (2022)
+- *Authors:* Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, Yuan Cao
+- *Venue:* ICLR 2023 (Oral Presentation)
+- *arXiv:* [[https://arxiv.org/abs/2210.03629]]
+- *Website:* [[https://react-lm.github.io/]]
+
+*Key Contributions:*
+- Introduces interleaved reasoning traces and task-specific actions
+- Combines chain-of-thought reasoning with external environment interaction
+- Demonstrates 34% absolute improvement on ALFWorld and 10% on WebShop
+- Overcomes hallucination issues in pure reasoning approaches
+
+*Relevance to Terminal Agents:* Foundational paradigm for autonomous agents that can both reason about problems and take concrete actions through tool calling.
+
+** Reflexion: Self-Improving Agents
+
+*** Reflexion: Language Agents with Verbal Reinforcement Learning (2023)
+- *Authors:* Noah Shinn, Federico Cassano, Ashwin Gopinath, Karthik Narasimhan, Shunyu Yao
+- *Venue:* NeurIPS 2023
+- *Key Innovation:* Verbal self-reflection for iterative improvement
+
+*Relevance:* Shows how agents can learn from their mistakes and improve performance over time.
+
+* Tool-Calling and Function Calling Research
+
+** Foundational Tool Learning
+
+*** Toolformer: Language Models Can Teach Themselves to Use Tools (2023)
+- *Authors:* Timo Schick, Jane Dwivedi-Yu, Roberto Dessì, Roberta Raileanu, Maria Lomeli, Luke Zettlemoyer, Nicola Cancedda, Thomas Scialom
+- *Venue:* NeurIPS 2023
+- *arXiv:* [[https://arxiv.org/abs/2302.04761]]
+
+*Key Contributions:*
+- Self-supervised learning of tool usage
+- Demonstrates when and how to call APIs
+- Generalizes across multiple tool types
+
+*** ToolAlpaca: Generalized Tool Learning for Language Models with 3000 Simulated Cases (2023)
+- *Authors:* Qiaoyu Tang, Ziliang Deng, Hongyu Lin, Xianpei Han, Qiao Liang, Le Sun
+- *Key Innovation:* Large-scale synthetic dataset for tool learning
+
+** Recent Advances in Function Calling (2024)
+
+*** Enhancing Function-Calling Capabilities in LLMs (2024)
+- *arXiv:* [[https://arxiv.org/html/2412.01130v2]]
+- *Focus:* Strategies for prompt formats, data integration, multilingual translation
+
+*** ToolACE: Synthetic Data Generation for Tool Calling (2024)
+- *Authors:* Liu et al.
+- *Key Innovation:* Agentic pipeline generating 26,000+ APIs for training
+- *Impact:* Demonstrates diversified function-calling data improves learning
+
+*** TinyAgent: Function Calling at the Edge (2024)
+- *Institution:* Berkeley AI Research
+- *Blog Post:* [[https://bair.berkeley.edu/blog/2024/05/29/tiny-agent/]]
+- *Focus:* Small language models for edge deployment with function calling
+
+** Evaluation and Benchmarking
+
+*** Berkeley Function Calling Leaderboard
+- *Purpose:* Comprehensive evaluation of LLM function-calling capabilities
+- *Models Evaluated:* GPT-4o, Gemini 1.5, Claude 3.5, others
+- *Key Finding:* GPT-4o-2024-08-06 shows highest accuracy
+
+*** Nexus Function Calling Benchmark
+- *Complementary evaluation framework for tool usage*
+
+* Code Generation and Programming Assistants
+
+** Comprehensive Surveys
+
+*** A Survey of Large Language Models for Code: Evolution, Benchmarking, and Future Trends (2024)
+- *arXiv:* [[https://arxiv.org/html/2311.10372v2]]
+- *Publication Date:* January 2024
+- *Scope:* Comprehensive overview of code LLMs including evolution and benchmarking
+
+** Comparative Studies
+
+*** Program Code Generation with Generative AIs (2024)
+- *Venue:* MDPI Algorithms (January 2024)
+- *Focus:* Correctness, efficiency, maintainability comparison
+- *Models Tested:* ChatGPT, Bing AI Chat, GitHub Copilot, StarCoder, Code Llama, CodeWhisperer, InstructCodeT5+
+
+*Key Findings:*
+- GitHub Copilot: 50% problem-solving rate (best overall)
+- BingAI Chat: 38.9% (superior in Python)
+- ChatGPT & Code Llama: 22.2% each
+- StarCoder & InstructCodeT5+: 5.6% each
+
+** Model-Specific Research
+
+*** CodeT5 Series
+- *CodeT5:* First code-aware, encoder-decoder pre-trained model
+- *Website:* [[https://www.salesforce.com/blog/codet5/]]
+- *GitHub:* [[https://github.com/salesforce/CodeT5]]
+- *CodeT5+:* Enhanced version with state-of-the-art performance
+
+*** GitHub Copilot Impact Studies
+- *GitClear Study (2023):* Analysis of 150M+ changed lines examining code quality impact
+- *Key Finding:* Significant uptick in code churn with AI assistance
+
+** Code Quality and Productivity Analysis
+
+*** Coding on Copilot: 2023 Data Suggests Downward Pressure on Code Quality (2024)
+- *Institution:* GitClear
+- *PDF:* [[https://gitclear-public.s3.us-west-2.amazonaws.com/Coding-on-Copilot-2024-Developer-Research.pdf]]
+- *Methodology:* 4-year longitudinal study of 150M+ changed lines
+
+* Software Engineering Benchmarks
+
+** SWE-bench Ecosystem
+
+*** SWE-bench: Can Language Models Resolve Real-World GitHub Issues? (2024)
+- *Venue:* ICLR 2024 (Oral Presentation)
+- *GitHub:* [[https://github.com/SWE-bench/SWE-bench]]
+- *Website:* [[http://www.swebench.com]]
+- *Innovation:* First benchmark using real GitHub issues
+
+*** SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering (2024)
+- *Authors:* John Yang, Carlos E. Jimenez, Alexander Wettig, Kilian Lieret, Shunyu Yao, Karthik Narasimhan, Ofir Press
+- *arXiv:* [[https://arxiv.org/abs/2405.15793]]
+- *Venue:* NeurIPS 2024
+- *GitHub:* [[https://github.com/SWE-agent/SWE-agent]]
+
+*Performance:*
+- 12.5% pass@1 rate on SWE-bench (state-of-the-art)
+- 87.7% on HumanEvalFix
+
+*** SWE-bench Verified (2024)
+- *Collaboration:* OpenAI + Original Authors
+- *Release:* August 2024
+- *Innovation:* Human-validated 500-problem subset
+
+*** SWE-PolyBench (2024)
+- *Institution:* Amazon
+- *Innovation:* First multilingual software engineering benchmark
+- *Scope:* 2,000+ issues in 4 programming languages
+
+** Performance Milestones (2024)
+
+*** Top Performing Systems
+- *Augment:* 65.4% success rate on SWE-bench Verified
+- *Mini-SWE-Agent:* 65% success rate (100 lines of Python)
+- *Devin:* 13.86% on full SWE-bench (vs. 1.96% previous baseline)
+
+* Practical Applications and Industry Impact
+
+** Terminal Agent Implementations
+
+*** Claude Code (Anthropic)
+- *Official Tool:* Terminal-native autonomous agent
+- *Strengths:* Comprehensive tool support, context awareness
+- *Documentation:* [[https://docs.anthropic.com/claude/docs/tool-use]]
+
+*** Aider: Git-Aware AI Pair Programmer
+- *GitHub:* [[https://github.com/paul-gauthier/aider]]
+- *Specialty:* Multi-file edits, commit message generation
+- *Integration:* Deep git workflow integration
+
+*** Sourcegraph Amp
+- *Innovation:* Unconstrained token approach
+- *GitHub:* [[https://github.com/sourcegraph/amp]]
+- *Advantage:* Large context windows for complex operations
+
+*** OpenHands (formerly OpenDevin)
+- *GitHub:* [[https://github.com/All-Hands-AI/OpenHands]]
+- *Scope:* Full development capabilities
+- *Architecture:* Autonomous agent framework
+
+** Multimodal Capabilities
+
+*** Gemini Integration
+- *Platform:* Google AI
+- *Documentation:* [[https://ai.google.dev/gemini-api/docs]]
+- *Strength:* Multimodal analysis (text + images)
+- *Application:* Architecture diagram → code structure generation
+
+* Research Frontiers and Future Directions
+
+** Edge Deployment Research
+- *Focus:* Small Language Models (SLMs) for secure, private deployment
+- *Goal:* Function calling capabilities matching GPT-4 performance
+- *Advantages:* Reduced latency, privacy preservation, cost efficiency
+
+** Multilingual and Cross-Platform Support
+- *Challenge:* Extending beyond Python-centric benchmarks
+- *Opportunity:* Real-world development environment diversity
+- *Research:* SWE-PolyBench as first multilingual benchmark
+
+** Integration with Software Development Lifecycle
+- *Areas:* Testing, documentation, code review, deployment
+- *Challenge:* Moving beyond bug fixes to feature development
+- *Opportunity:* End-to-end development assistance
+
+** Security and Safety Research
+- *Focus:* Secure code generation, vulnerability detection
+- *Challenge:* Balancing capability with safety
+- *Applications:* Automated security auditing, defensive programming
+
+* Reading Schedule Recommendations
+
+** Phase 1: Foundations (Weeks 1-2)
+1. ReAct paper (Yao et al., 2022)
+2. Toolformer (Schick et al., 2023)
+3. Survey of LLMs for Code (2024)
+
+** Phase 2: Tool-Calling Deep Dive (Weeks 3-4)
+1. ToolAlpaca (Tang et al., 2023)
+2. ToolACE (Liu et al., 2024)
+3. Berkeley Function Calling Leaderboard analysis
+4. TinyAgent blog post
+
+** Phase 3: Code Generation and Assistants (Weeks 5-6)
+1. CodeT5+ paper
+2. Program Code Generation with Generative AIs
+3. GitClear Copilot impact study
+
+** Phase 4: Software Engineering Applications (Weeks 7-8)
+1. SWE-bench original paper (ICLR 2024)
+2. SWE-agent paper (NeurIPS 2024)
+3. SWE-bench Verified documentation
+4. Devin technical report
+
+** Phase 5: Practical Implementation (Weeks 9-10)
+1. Claude Code documentation
+2. Aider architecture analysis
+3. OpenHands codebase exploration
+4. Custom agent implementation planning
+
+* Additional Resources
+
+** Conferences and Venues
+- *NeurIPS:* Neural Information Processing Systems
+- *ICLR:* International Conference on Learning Representations
+- *ICML:* International Conference on Machine Learning
+- *ACL:* Association for Computational Linguistics
+- *EMNLP:* Empirical Methods in Natural Language Processing
+
+** Research Groups and Labs
+- *Princeton NLP:* Karthik Narasimhan's group
+- *Berkeley AI Research (BAIR)*
+- *OpenAI Research*
+- *Anthropic Research*
+- *Google DeepMind*
+- *Salesforce Research*
+
+** Open Source Communities
+- *Hugging Face:* Model repositories and papers
+- *Papers with Code:* Implementation tracking
+- *GitHub:* Source code and experiments
+
+** Industry Blogs and Technical Reports
+- *OpenAI Blog*
+- *Anthropic Research Blog*
+- *Google AI Blog*
+- *Berkeley AI Research Blog*
+- *Towards Data Science*
+
+* Experimental Extensions
+
+** Hands-On Projects
+1. Implement ReAct pattern with simple tools
+2. Create function-calling benchmark for domain-specific tasks
+3. Build minimal terminal agent using research insights
+4. Evaluate existing agents on novel tasks
+5. Contribute to open-source agent projects
+
+** Research Questions to Explore
+1. How do different prompting strategies affect tool-calling accuracy?
+2. What is the optimal balance between reasoning and acting?
+3. How can agents better handle multi-step, long-horizon tasks?
+4. What safety measures are needed for autonomous code agents?
+5. How can agents learn from their mistakes more effectively?
+
+** Future Research Directions
+- *Multimodal tool calling:* Combining text, images, and other modalities
+- *Agent collaboration:* Multiple agents working together
+- *Domain specialization:* Agents tuned for specific programming domains
+- *Safety and alignment:* Ensuring agents behave as intended
+- *Efficiency optimization:* Reducing computational costs while maintaining capability
+
+* Notes on Access and Implementation
+
+** Paper Access
+- Most papers available on arXiv or through institutional access
+- Many have accompanying code repositories on GitHub
+- Several include interactive demos and websites
+
+** Reproduction Considerations
+- Code availability varies by paper
+- Some require significant computational resources
+- API access needed for certain experiments
+- Consider ethical implications of autonomous agents
+
+** Community Engagement
+- Join relevant Discord/Slack communities
+- Participate in challenges and competitions
+- Contribute to open-source projects
+- Attend workshops and conferences
+
+This reading list provides a comprehensive foundation for understanding terminal AI agents, from theoretical foundations to practical implementations. The progression from basic concepts to cutting-edge research prepares readers for both understanding existing systems and contributing to future developments.

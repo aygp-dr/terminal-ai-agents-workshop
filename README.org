@@ -213,6 +213,12 @@ Contributions are welcome! Please:
 - [[https://ai.google.dev/gemini-api/docs][Gemini CLI]] - Google's multimodal AI agent
 - [[https://github.com/All-Hands-AI/OpenHands][OpenHands]] - Full development capabilities
 
+** Research Papers and Literature
+- [[file:research/reading-list.org][Comprehensive Reading List]] - Annotated bibliography of 40+ papers
+- [[https://arxiv.org/abs/2210.03629][ReAct: Reasoning and Acting (2022)]] - Foundational paradigm
+- [[https://arxiv.org/abs/2405.15793][SWE-agent (2024)]] - Software engineering agents
+- [[https://www.swebench.com][SWE-bench]] - Real-world software engineering benchmark
+
 ** Documentation
 - [[https://docs.anthropic.com/claude/docs/tool-use][Anthropic Tool Use]]
 - [[https://platform.openai.com/docs/guides/function-calling][OpenAI Function Calling]]
