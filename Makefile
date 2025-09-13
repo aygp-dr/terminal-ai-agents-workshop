@@ -1,4 +1,4 @@
-.PHONY: help install dev sync test lint format typecheck clean run shell docs pre-commit setup
+.PHONY: help install dev sync test lint format typecheck clean run shell docs pre-commit setup tangle README.md
 
 help:
 	@echo "Available commands:"
@@ -15,6 +15,8 @@ help:
 	@echo "  make docs       - Build documentation"
 	@echo "  make pre-commit - Run pre-commit hooks"
 	@echo "  make setup      - Initial project setup"
+	@echo "  make tangle     - Extract code from setup.org"
+	@echo "  make README.md  - Generate README.md from README.org"
 
 install:
 	uv sync --no-dev
@@ -69,3 +71,9 @@ pre-commit:
 setup: dev
 	uv run pre-commit install
 	@echo "Project setup complete!"
+
+tangle:
+	emacs --batch -l org setup.org -f org-babel-tangle
+
+README.md: README.org
+	emacs --batch -l org README.org -f org-md-export-to-markdown

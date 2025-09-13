@@ -1,0 +1,234 @@
+#+TITLE: Terminal AI Agents Workshop
+#+AUTHOR: aygp-dr
+#+OPTIONS: toc:2 num:nil
+
+* Overview
+
+A comprehensive workshop for building terminal-based AI agents with LLM tool calling, featuring implementations in Python and Scheme with literate programming via Org-mode.
+
+[[https://github.com/aygp-dr/terminal-ai-agents-workshop/actions][https://img.shields.io/github/actions/workflow/status/aygp-dr/terminal-ai-agents-workshop/ci.yml?branch=main]]
+[[https://github.com/aygp-dr/terminal-ai-agents-workshop/blob/main/LICENSE][https://img.shields.io/github/license/aygp-dr/terminal-ai-agents-workshop]]
+[[https://github.com/aygp-dr/terminal-ai-agents-workshop][https://img.shields.io/badge/python-3.11+-blue.svg]]
+
+* Features
+
+- 🤖 Complete terminal AI agent implementations
+- 🛠️ Extensible tool system for file operations, git, web search
+- 📚 Literate programming with Org-mode
+- 🐍 Python and Scheme (Guile) implementations
+- 🧪 Comprehensive testing framework
+- 📊 Agent comparison and benchmarking tools
+- 🔧 Full Emacs integration with project-specific configuration
+
+* Quick Start
+
+** Prerequisites
+
+- Python 3.11+
+- =uv= package manager
+- Emacs (optional, for Org-mode features)
+- Git
+
+** Installation
+
+#+begin_src bash
+# Clone the repository
+git clone https://github.com/aygp-dr/terminal-ai-agents-workshop.git
+cd terminal-ai-agents-workshop
+
+# Install dependencies with uv
+gmake dev
+
+# Or manually
+uv sync
+
+# Install pre-commit hooks
+gmake setup
+#+end_src
+
+** Running the Workshop
+
+#+begin_src bash
+# Run the minimal agent
+uv run python src/labs/minimal_agent.py
+
+# Run the complete agent
+uv run python src/examples/complete_agent.py
+
+# Run tests
+gmake test
+
+# Run linting and formatting
+gmake lint format
+#+end_src
+
+* Project Structure
+
+#+begin_example
+terminal-ai-agents-workshop/
+├── setup.org                 # Literate programming source
+├── src/
+│   ├── patterns/            # Agent design patterns
+│   │   └── basic_tool.py    # Tool calling pattern
+│   ├── labs/                # Workshop exercises
+│   │   ├── minimal_agent.py # Minimal implementation
+│   │   └── agent_comparison.py # Benchmarking
+│   ├── tools/               # Tool implementations
+│   │   ├── file_operations.py
+│   │   ├── git_operations.py
+│   │   ├── project_analysis.py
+│   │   └── web_search.py
+│   └── examples/            # Complete examples
+│       └── complete_agent.py
+├── tests/                   # Test suite
+├── scripts/                 # Setup and utility scripts
+└── Makefile                # Development commands
+#+end_example
+
+* Workshop Labs
+
+** Lab 1: Building a Minimal Agent
+
+Learn the fundamentals of tool-calling agents by building a minimal implementation that can read files and execute shell commands.
+
+#+begin_src python
+from src.labs.minimal_agent import MinimalAgent
+
+agent = MinimalAgent(api_key="your-key")
+response = agent.chat("List all Python files in the current directory")
+#+end_src
+
+** Lab 2: Implementing Tool Patterns
+
+Explore different tool patterns including file operations, project analysis, and web search integration.
+
+** Lab 3: Agent Comparison
+
+Benchmark different terminal AI agents (Claude Code, Aider, Amp, Gemini CLI) on common development tasks.
+
+** Lab 4: Building Custom Tools
+
+Create your own tools for specific workflows and integrate them with the agent framework.
+
+* Development
+
+** Available Make Targets
+
+#+begin_src bash
+make help      # Show all available commands
+make dev       # Install development dependencies
+make test      # Run test suite
+make lint      # Run linting checks
+make format    # Format code
+make typecheck # Run type checking with pyright
+make clean     # Clean cache and build files
+make docs      # Generate documentation
+#+end_src
+
+** Emacs Integration
+
+The project includes comprehensive Emacs configuration:
+
+- =.dir-locals.el= - Project-specific settings
+- =.projectile= - Project navigation
+- Automatic =uv= integration for Python shells
+- Configured flycheck and LSP support
+
+** Literate Programming
+
+The main workshop content is written in =setup.org= using literate programming. To extract (tangle) the source code:
+
+#+begin_src bash
+# Using Emacs
+emacs --batch -l org setup.org -f org-babel-tangle
+
+# Or using the Makefile
+make tangle
+#+end_src
+
+* Tool System
+
+** Core Tools
+
+| Tool | Purpose | Example Usage |
+|------+---------+---------------|
+| =create_file= | Create new files | Generate boilerplate code |
+| =edit_file= | Modify existing files | Apply fixes and refactoring |
+| =list_directory= | Browse project structure | Understand codebase layout |
+| =run_command= | Execute shell commands | Run tests, builds |
+| =git_operations= | Version control | Commit, diff, branch management |
+| =web_search= | Search and fetch web content | Find documentation, examples |
+| =project_analysis= | Analyze code structure | Find TODOs, analyze imports |
+
+** Creating Custom Tools
+
+#+begin_src python
+from typing import Dict, Any
+
+def my_custom_tool(param1: str, param2: int) -> str:
+    """Your custom tool implementation"""
+    # Tool logic here
+    return f"Processed {param1} with {param2}"
+
+# Register with agent
+agent.tools.register(Tool(
+    name="my_tool",
+    description="Description for LLM",
+    parameters={
+        "type": "object",
+        "properties": {
+            "param1": {"type": "string"},
+            "param2": {"type": "integer"}
+        }
+    },
+    function=my_custom_tool
+))
+#+end_src
+
+* API Keys
+
+Set up your API keys in environment variables or =.env= file:
+
+#+begin_src bash
+export ANTHROPIC_API_KEY="your-key"
+export OPENAI_API_KEY="your-key"
+export GEMINI_API_KEY="your-key"
+#+end_src
+
+* Contributing
+
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch
+3. Run tests and linting
+4. Submit a pull request
+
+* Resources
+
+** Terminal AI Agents
+- [[https://github.com/anthropics/claude-code][Claude Code]] - Anthropic's terminal agent
+- [[https://github.com/paul-gauthier/aider][Aider]] - Git-aware AI pair programmer
+- [[https://github.com/sourcegraph/amp][Amp]] - Sourcegraph's unconstrained agent
+- [[https://github.com/All-Hands-AI/OpenHands][OpenHands]] - Full development capabilities
+
+** Documentation
+- [[https://docs.anthropic.com/claude/docs/tool-use][Anthropic Tool Use]]
+- [[https://platform.openai.com/docs/guides/function-calling][OpenAI Function Calling]]
+- [[https://ghuntley.com/agent/][How to build an agent]]
+
+* License
+
+MIT License - See LICENSE file for details
+
+* Acknowledgments
+
+- Workshop inspired by the terminal AI agent pattern pioneered by Geoffrey Huntley
+- Scheme implementation based on patterns from =guile-ampcode-agent=
+- Community contributions from workshop participants
+
+* Contact
+
+- Repository: [[https://github.com/aygp-dr/terminal-ai-agents-workshop]]
+- Issues: [[https://github.com/aygp-dr/terminal-ai-agents-workshop/issues]]
+- Collaborators: @jwalsh, @seanjensengrey
