@@ -6,9 +6,9 @@
 
 A comprehensive workshop for building terminal-based AI agents with LLM tool calling, featuring implementations in Python and Scheme with literate programming via Org-mode.
 
-[[https://github.com/aygp-dr/terminal-ai-agents-workshop/actions][https://img.shields.io/github/actions/workflow/status/aygp-dr/terminal-ai-agents-workshop/ci.yml?branch=main]]
-[[https://github.com/aygp-dr/terminal-ai-agents-workshop/blob/main/LICENSE][https://img.shields.io/github/license/aygp-dr/terminal-ai-agents-workshop]]
 [[https://github.com/aygp-dr/terminal-ai-agents-workshop][https://img.shields.io/badge/python-3.11+-blue.svg]]
+[[https://github.com/aygp-dr/terminal-ai-agents-workshop][https://img.shields.io/badge/uv-package_manager-green.svg]]
+[[https://github.com/aygp-dr/terminal-ai-agents-workshop][https://img.shields.io/badge/org--mode-literate_programming-purple.svg]]
 
 * Features
 
