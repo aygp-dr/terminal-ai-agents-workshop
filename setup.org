@@ -1,0 +1,730 @@
+#+TITLE: Terminal AI Agents Workshop
+#+AUTHOR: Your Name
+#+DATE: [2025-09-13 Fri]
+#+PROPERTY: header-args :mkdirp yes
+#+PROPERTY: header-args:python :python python3
+#+PROPERTY: header-args:bash :results output
+#+OPTIONS: toc:2
+
+* Overview
+
+This workshop explores the design and implementation of Terminal AI Agents - command-line tools that use LLMs to autonomously perform development tasks through tool calling and conversation loops.
+
+** Architecture Overview
+
+#+begin_src mermaid :file images/agent-architecture.png :exports results
+graph TB
+    User[User Input] --> Agent[Agent Core]
+    Agent --> LLM[LLM API]
+    LLM --> Tools[Tool Registry]
+    Tools --> FileOps[File Operations]
+    Tools --> ShellCmd[Shell Commands]
+    Tools --> WebSearch[Web Search]
+    Tools --> CodeAnalysis[Code Analysis]
+    
+    Agent --> Context[Context Manager]
+    Context --> Memory[Conversation Memory]
+    Context --> Project[Project Context]
+    
+    style Agent fill:#f9f,stroke:#333,stroke-width:4px
+    style LLM fill:#bbf,stroke:#333,stroke-width:2px
+    style Tools fill:#bfb,stroke:#333,stroke-width:2px
+#+end_src
+
+** Agent Patterns
+
+*** Basic Tool Calling Pattern
+#+begin_src python :tangle src/patterns/basic_tool.py
+"""Basic tool calling pattern used by most terminal agents"""
+from typing import Dict, Any, Callable
+import json
+
+class Tool:
+    def __init__(self, name: str, description: str, 
+                 parameters: Dict[str, Any], 
+                 function: Callable):
+        self.name = name
+        self.description = description
+        self.parameters = parameters
+        self.function = function
+    
+    def execute(self, **kwargs) -> str:
+        """Execute the tool with given parameters"""
+        return self.function(**kwargs)
+
+class ToolRegistry:
+    def __init__(self):
+        self.tools = {}
+    
+    def register(self, tool: Tool):
+        """Register a tool for use by the agent"""
+        self.tools[tool.name] = tool
+    
+    def get_schema(self) -> list:
+        """Get schema for all tools (for LLM)"""
+        return [{
+            "name": tool.name,
+            "description": tool.description,
+            "parameters": tool.parameters
+        } for tool in self.tools.values()]
+#+end_src
+
+* Workshop Labs
+
+** Lab 1: Building a Minimal Agent
+
+*** Python Implementation
+#+begin_src python :tangle src/labs/minimal_agent.py
+#!/usr/bin/env python3
+"""Minimal terminal agent implementation"""
+import os
+import json
+from typing import Dict, Any
+import anthropic  # or openai, google.generativeai
+
+class MinimalAgent:
+    def __init__(self, api_key: str):
+        self.client = anthropic.Anthropic(api_key=api_key)
+        self.tools = ToolRegistry()
+        self._register_basic_tools()
+    
+    def _register_basic_tools(self):
+        """Register basic file and shell tools"""
+        # File reading tool
+        self.tools.register(Tool(
+            name="read_file",
+            description="Read contents of a file",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string", "description": "File path"}
+                },
+                "required": ["path"]
+            },
+            function=lambda path: open(path).read()
+        ))
+        
+        # Shell command tool
+        import subprocess
+        self.tools.register(Tool(
+            name="run_command",
+            description="Run a shell command",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "command": {"type": "string", "description": "Command to run"}
+                },
+                "required": ["command"]
+            },
+            function=lambda command: subprocess.check_output(
+                command, shell=True, text=True
+            )
+        ))
+    
+    def chat(self, message: str) -> str:
+        """Send message to LLM with tool support"""
+        response = self.client.messages.create(
+            model="claude-3-sonnet-20240229",
+            messages=[{"role": "user", "content": message}],
+            tools=self.tools.get_schema(),
+            max_tokens=4096
+        )
+        
+        # Handle tool calls
+        if hasattr(response, 'tool_calls'):
+            for tool_call in response.tool_calls:
+                tool = self.tools.tools[tool_call.name]
+                result = tool.execute(**tool_call.parameters)
+                # Send result back to LLM...
+        
+        return response.content
+
+if __name__ == "__main__":
+    agent = MinimalAgent(os.getenv("ANTHROPIC_API_KEY"))
+    while True:
+        user_input = input("> ")
+        if user_input.lower() in ['quit', 'exit']:
+            break
+        print(agent.chat(user_input))
+#+end_src
+
+*** Scheme Implementation (Guile)
+#+begin_src scheme :tangle src/labs/minimal-agent.scm
+#!/usr/bin/env guile
+!#
+;;; Minimal agent implementation in Guile Scheme
+
+(use-modules (ice-9 format)
+             (ice-9 readline)
+             (web client)
+             (json)
+             (srfi srfi-1))
+
+;; Tool definition
+(define (make-tool name description parameters function)
+  `((name . ,name)
+    (description . ,description)
+    (parameters . ,parameters)
+    (function . ,function)))
+
+;; Tool registry
+(define *tools* '())
+
+(define (register-tool! tool)
+  (set! *tools* (cons tool *tools*)))
+
+;; Register basic tools
+(register-tool!
+ (make-tool
+  "read_file"
+  "Read contents of a file"
+  '((type . "object")
+    (properties . ((path . ((type . "string")))))
+    (required . #("path")))
+  (lambda (path)
+    (call-with-input-file path
+      (lambda (port)
+        (get-string-all port))))))
+
+;; Main REPL
+(define (agent-repl)
+  (activate-readline)
+  (format #t "Terminal Agent (Guile)~%")
+  (let loop ()
+    (display "> ")
+    (let ((input (readline)))
+      (unless (member input '("quit" "exit"))
+        ;; Process with LLM here
+        (format #t "Processing: ~a~%" input)
+        (loop)))))
+
+(agent-repl)
+#+end_src
+
+** Lab 2: Implementing Tool Patterns
+
+*** File Operations Suite
+#+begin_src python :tangle src/tools/file_operations.py
+"""File operation tools for terminal agents"""
+import os
+import shutil
+from pathlib import Path
+
+class FileOperations:
+    @staticmethod
+    def create_file(path: str, content: str) -> str:
+        """Create a new file with content"""
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        with open(path, 'w') as f:
+            f.write(content)
+        return f"Created file: {path}"
+    
+    @staticmethod
+    def edit_file(path: str, old_content: str, new_content: str) -> str:
+        """Replace content in a file"""
+        with open(path, 'r') as f:
+            content = f.read()
+        
+        if old_content not in content:
+            raise ValueError(f"Content not found in {path}")
+        
+        content = content.replace(old_content, new_content, 1)
+        with open(path, 'w') as f:
+            f.write(content)
+        
+        return f"Updated {path}"
+    
+    @staticmethod
+    def list_directory(path: str = ".") -> str:
+        """List directory contents"""
+        items = []
+        for item in os.listdir(path):
+            item_path = os.path.join(path, item)
+            if os.path.isdir(item_path):
+                items.append(f"📁 {item}/")
+            else:
+                size = os.path.getsize(item_path)
+                items.append(f"📄 {item} ({size} bytes)")
+        return "\n".join(items)
+#+end_src
+
+*** Project Analysis Tools
+#+begin_src python :tangle src/tools/project_analysis.py
+"""Project analysis tools for understanding codebases"""
+import ast
+import subprocess
+from collections import defaultdict
+
+class ProjectAnalyzer:
+    @staticmethod
+    def analyze_python_file(path: str) -> dict:
+        """Analyze a Python file for structure"""
+        with open(path, 'r') as f:
+            tree = ast.parse(f.read())
+        
+        analysis = {
+            "classes": [],
+            "functions": [],
+            "imports": []
+        }
+        
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ClassDef):
+                analysis["classes"].append({
+                    "name": node.name,
+                    "methods": [n.name for n in node.body 
+                               if isinstance(n, ast.FunctionDef)]
+                })
+            elif isinstance(node, ast.FunctionDef):
+                analysis["functions"].append(node.name)
+            elif isinstance(node, ast.Import):
+                analysis["imports"].extend(alias.name for alias in node.names)
+        
+        return analysis
+    
+    @staticmethod
+    def find_todos(directory: str = ".") -> list:
+        """Find all TODO comments in project"""
+        result = subprocess.run(
+            ["grep", "-r", "-n", "TODO", directory],
+            capture_output=True, text=True
+        )
+        
+        todos = []
+        for line in result.stdout.splitlines():
+            parts = line.split(":", 2)
+            if len(parts) >= 3:
+                todos.append({
+                    "file": parts[0],
+                    "line": parts[1],
+                    "text": parts[2].strip()
+                })
+        return todos
+#+end_src
+
+** Lab 3: Agent Comparison
+
+*** Testing Framework
+#+begin_src python :tangle src/labs/agent_comparison.py
+"""Compare different terminal AI agents"""
+import time
+import subprocess
+from typing import Dict, List, Tuple
+
+class AgentBenchmark:
+    def __init__(self):
+        self.agents = {
+            "claude-code": "claude",
+            "aider": "aider",
+            "amp": "amp",
+            "gemini-cli": "gemini"
+        }
+        self.tasks = [
+            "Create a Python function to calculate fibonacci",
+            "Fix the syntax error in main.py",
+            "Add error handling to the database connection",
+            "Write unit tests for the Calculator class"
+        ]
+    
+    def run_task(self, agent: str, task: str) -> Tuple[str, float]:
+        """Run a single task with an agent"""
+        start = time.time()
+        
+        # Agent-specific command construction
+        if agent == "claude-code":
+            cmd = ["claude", "-m", "sonnet", task]
+        elif agent == "aider":
+            cmd = ["aider", "--message", task]
+        elif agent == "amp":
+            cmd = ["amp", "-x", task]
+        else:
+            cmd = ["gemini", task]
+        
+        try:
+            result = subprocess.run(
+                cmd, capture_output=True, text=True, timeout=60
+            )
+            elapsed = time.time() - start
+            return result.stdout, elapsed
+        except subprocess.TimeoutExpired:
+            return "TIMEOUT", 60.0
+    
+    def compare_agents(self) -> Dict[str, List[float]]:
+        """Compare all agents on all tasks"""
+        results = {agent: [] for agent in self.agents}
+        
+        for task in self.tasks:
+            print(f"\nTask: {task}")
+            for agent_name, agent_cmd in self.agents.items():
+                output, time_taken = self.run_task(agent_cmd, task)
+                results[agent_name].append(time_taken)
+                print(f"  {agent_name}: {time_taken:.2f}s")
+        
+        return results
+#+end_src
+
+** Lab 4: Building Custom Tools
+
+*** Web Search Integration
+#+begin_src python :tangle src/tools/web_search.py
+"""Web search tool for agents"""
+import os
+import requests
+from typing import List, Dict
+
+class WebSearchTool:
+    def __init__(self, api_key: str = None):
+        self.api_key = api_key or os.getenv("SEARCH_API_KEY")
+        self.base_url = "https://api.search.engine/v1"
+    
+    def search(self, query: str, max_results: int = 5) -> List[Dict]:
+        """Search the web and return results"""
+        response = requests.get(
+            f"{self.base_url}/search",
+            params={"q": query, "limit": max_results},
+            headers={"Authorization": f"Bearer {self.api_key}"}
+        )
+        
+        if response.status_code != 200:
+            raise Exception(f"Search failed: {response.status_code}")
+        
+        results = response.json()["results"]
+        return [{
+            "title": r["title"],
+            "url": r["url"],
+            "snippet": r["snippet"]
+        } for r in results]
+    
+    def fetch_content(self, url: str) -> str:
+        """Fetch and extract content from URL"""
+        response = requests.get(url)
+        # Simple extraction - in practice use BeautifulSoup
+        return response.text[:1000] + "..."
+#+end_src
+
+*** Git Operations
+#+begin_src python :tangle src/tools/git_operations.py
+"""Git operation tools for version control"""
+import subprocess
+from typing import List, Optional
+
+class GitTools:
+    @staticmethod
+    def status() -> str:
+        """Get git status"""
+        return subprocess.check_output(
+            ["git", "status", "--short"], text=True
+        )
+    
+    @staticmethod
+    def diff(file: Optional[str] = None) -> str:
+        """Get git diff"""
+        cmd = ["git", "diff"]
+        if file:
+            cmd.append(file)
+        return subprocess.check_output(cmd, text=True)
+    
+    @staticmethod
+    def commit(message: str, files: List[str] = None) -> str:
+        """Stage and commit changes"""
+        # Stage files
+        if files:
+            subprocess.run(["git", "add"] + files)
+        else:
+            subprocess.run(["git", "add", "-A"])
+        
+        # Commit
+        result = subprocess.run(
+            ["git", "commit", "-m", message],
+            capture_output=True, text=True
+        )
+        return result.stdout
+    
+    @staticmethod
+    def branch_info() -> dict:
+        """Get branch information"""
+        current = subprocess.check_output(
+            ["git", "branch", "--show-current"], text=True
+        ).strip()
+        
+        all_branches = subprocess.check_output(
+            ["git", "branch", "-a"], text=True
+        ).splitlines()
+        
+        return {
+            "current": current,
+            "local": [b.strip() for b in all_branches if not b.startswith("  remotes/")],
+            "remote": [b.strip() for b in all_branches if b.startswith("  remotes/")]
+        }
+#+end_src
+
+* Implementation Examples
+
+** Complete Agent Implementation
+#+begin_src python :tangle src/examples/complete_agent.py
+#!/usr/bin/env python3
+"""Complete terminal agent with all features"""
+import os
+import sys
+import json
+import asyncio
+from typing import Dict, Any, List
+from dataclasses import dataclass
+import anthropic
+
+# Import our tools
+from tools.file_operations import FileOperations
+from tools.project_analysis import ProjectAnalyzer
+from tools.web_search import WebSearchTool
+from tools.git_operations import GitTools
+
+@dataclass
+class Message:
+    role: str
+    content: str
+    tool_calls: List[Dict] = None
+    tool_results: List[Dict] = None
+
+class TerminalAgent:
+    def __init__(self, api_key: str):
+        self.client = anthropic.Anthropic(api_key=api_key)
+        self.conversation = []
+        self.tools = self._setup_tools()
+    
+    def _setup_tools(self) -> Dict[str, Any]:
+        """Setup all available tools"""
+        return {
+            # File operations
+            "create_file": {
+                "function": FileOperations.create_file,
+                "schema": {
+                    "name": "create_file",
+                    "description": "Create a new file with content",
+                    "input_schema": {
+                        "type": "object",
+                        "properties": {
+                            "path": {"type": "string"},
+                            "content": {"type": "string"}
+                        },
+                        "required": ["path", "content"]
+                    }
+                }
+            },
+            "edit_file": {
+                "function": FileOperations.edit_file,
+                "schema": {
+                    "name": "edit_file",
+                    "description": "Edit existing file content",
+                    "input_schema": {
+                        "type": "object",
+                        "properties": {
+                            "path": {"type": "string"},
+                            "old_content": {"type": "string"},
+                            "new_content": {"type": "string"}
+                        },
+                        "required": ["path", "old_content", "new_content"]
+                    }
+                }
+            },
+            # Add more tools...
+        }
+    
+    async def process_message(self, user_input: str) -> str:
+        """Process user message and return response"""
+        self.conversation.append(Message("user", user_input))
+        
+        # Get LLM response with tools
+        response = await self._get_llm_response()
+        
+        # Process any tool calls
+        if hasattr(response, 'tool_calls'):
+            tool_results = await self._execute_tools(response.tool_calls)
+            # Send results back to LLM
+            response = await self._get_llm_response(tool_results)
+        
+        return response.content
+    
+    async def _get_llm_response(self, tool_results=None):
+        """Get response from LLM"""
+        messages = [{"role": m.role, "content": m.content} 
+                   for m in self.conversation]
+        
+        if tool_results:
+            messages.append({
+                "role": "user",
+                "content": f"Tool results: {json.dumps(tool_results)}"
+            })
+        
+        tools = [t["schema"] for t in self.tools.values()]
+        
+        return self.client.messages.create(
+            model="claude-3-opus-20240229",
+            messages=messages,
+            tools=tools,
+            max_tokens=4096
+        )
+    
+    async def _execute_tools(self, tool_calls: List[Dict]) -> List[Dict]:
+        """Execute requested tools"""
+        results = []
+        for call in tool_calls:
+            tool_name = call["name"]
+            if tool_name in self.tools:
+                try:
+                    result = self.tools[tool_name]["function"](**call["input"])
+                    results.append({
+                        "tool": tool_name,
+                        "result": result
+                    })
+                except Exception as e:
+                    results.append({
+                        "tool": tool_name,
+                        "error": str(e)
+                    })
+        return results
+    
+    def run(self):
+        """Run the agent REPL"""
+        print("Terminal AI Agent")
+        print("Type 'quit' to exit\n")
+        
+        while True:
+            try:
+                user_input = input("> ")
+                if user_input.lower() in ['quit', 'exit']:
+                    break
+                
+                response = asyncio.run(self.process_message(user_input))
+                print(f"\n{response}\n")
+                
+            except KeyboardInterrupt:
+                print("\nExiting...")
+                break
+            except Exception as e:
+                print(f"Error: {e}")
+
+if __name__ == "__main__":
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        print("Please set ANTHROPIC_API_KEY")
+        sys.exit(1)
+    
+    agent = TerminalAgent(api_key)
+    agent.run()
+#+end_src
+
+* Setup Instructions
+
+** Environment Setup
+#+begin_src bash :tangle scripts/setup.sh
+#!/bin/bash
+# Setup script for Terminal AI Agents Workshop
+
+echo "Setting up Terminal AI Agents Workshop..."
+
+# Create directory structure
+mkdir -p src/{patterns,labs,tools,examples}
+mkdir -p tests
+mkdir -p docs
+mkdir -p images
+
+# Install Python dependencies
+cat > requirements.txt << EOF
+anthropic>=0.18.0
+openai>=1.0.0
+google-generativeai>=0.3.0
+requests>=2.31.0
+pytest>=7.4.0
+python-dotenv>=1.0.0
+EOF
+
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+# Setup environment variables
+cat > .env.example << EOF
+# API Keys
+ANTHROPIC_API_KEY=your-key-here
+OPENAI_API_KEY=your-key-here
+GEMINI_API_KEY=your-key-here
+SEARCH_API_KEY=your-key-here
+
+# Agent Configuration
+DEFAULT_MODEL=claude-3-sonnet-20240229
+MAX_TOKENS=4096
+TEMPERATURE=0.7
+EOF
+
+echo "Setup complete! Don't forget to:"
+echo "1. Copy .env.example to .env and add your API keys"
+echo "2. Activate the virtual environment: source venv/bin/activate"
+echo "3. Run the examples: python src/examples/complete_agent.py"
+#+end_src
+
+** Running the Workshop
+#+begin_src bash :tangle scripts/run_workshop.sh
+#!/bin/bash
+# Run workshop examples
+
+# Source environment
+source venv/bin/activate
+source .env
+
+# Menu
+echo "Terminal AI Agents Workshop"
+echo "=========================="
+echo "1. Run minimal agent"
+echo "2. Run complete agent"
+echo "3. Compare agents benchmark"
+echo "4. Run tests"
+echo "5. Start Jupyter notebook"
+
+read -p "Select option: " choice
+
+case $choice in
+    1) python src/labs/minimal_agent.py ;;
+    2) python src/examples/complete_agent.py ;;
+    3) python src/labs/agent_comparison.py ;;
+    4) pytest tests/ -v ;;
+    5) jupyter notebook ;;
+    *) echo "Invalid option" ;;
+esac
+#+end_src
+
+* Resources
+
+** Terminal AI Agents
+| Agent | Source | Language | Key Features |
+|-------+--------+----------+--------------|
+| Claude Code | Anthropic | - | Terminal-native, autonomous |
+| Aider | [[https://github.com/paul-gauthier/aider][GitHub]] | Python | Git-aware, multi-file edits |
+| Amp | Sourcegraph | TypeScript | Unconstrained tokens |
+| Gemini CLI | Google | - | Multimodal support |
+| Continue | [[https://github.com/continuedev/continue][GitHub]] | TypeScript | IDE + terminal |
+| OpenHands | [[https://github.com/All-Hands-AI/OpenHands][GitHub]] | Python | Full dev capabilities |
+
+** Documentation
+- [[https://ghuntley.com/agent/][How to build an agent]] - The original pattern
+- [[https://github.com/dsp-dr/guile-ampcode-agent][Guile AmpCode Agent]] - Scheme implementation
+- [[https://docs.anthropic.com/claude/docs/tool-use][Anthropic Tool Use]] - Official docs
+- [[https://platform.openai.com/docs/guides/function-calling][OpenAI Function Calling]] - Official docs
+
+** Papers & Research
+- "Language Agents: A Survey" (2024)
+- "Tool Learning with Foundation Models" (2023)
+- "ReAct: Synergizing Reasoning and Acting" (2022)
+
+* Next Steps
+
+1. Complete all workshop labs
+2. Build your own agent implementation
+3. Create custom tools for your workflow
+4. Contribute to open source agents
+5. Share your learnings!
+
+#+begin_src bash :results output
+echo "Workshop setup complete!"
+echo "Total files to be generated: $(grep -c ':tangle' setup.org)"
+#+end_src

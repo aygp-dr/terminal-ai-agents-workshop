@@ -1,0 +1,54 @@
+{
+  "include": [
+    "terminal_ai_agents_workshop",
+    "tests"
+  ],
+  "exclude": [
+    "**/__pycache__",
+    "**/.venv",
+    "**/node_modules",
+    "build",
+    "dist"
+  ],
+  "pythonVersion": "3.11",
+  "pythonPlatform": "All",
+  "typeCheckingMode": "standard",
+  "reportMissingImports": true,
+  "reportMissingTypeStubs": false,
+  "reportUnusedImport": true,
+  "reportUnusedClass": true,
+  "reportUnusedFunction": true,
+  "reportUnusedVariable": true,
+  "reportDuplicateImport": true,
+  "reportOptionalMemberAccess": true,
+  "reportOptionalCall": true,
+  "reportOptionalIterable": true,
+  "reportOptionalContextManager": true,
+  "reportOptionalOperand": true,
+  "reportTypedDictNotRequiredAccess": true,
+  "reportPrivateImportUsage": true,
+  "reportConstantRedefinition": true,
+  "reportIncompatibleMethodOverride": true,
+  "reportIncompatibleVariableOverride": true,
+  "reportInconsistentConstructor": true,
+  "reportOverlappingOverload": true,
+  "reportMissingTypeArgument": false,
+  "reportUnnecessaryIsInstance": true,
+  "reportUnnecessaryCast": true,
+  "reportUnnecessaryComparison": true,
+  "reportImplicitStringConcatenation": false,
+  "reportUnusedExpression": true,
+  "reportUnnecessaryTypeIgnoreComment": true,
+  "reportMatchNotExhaustive": true,
+  "executionEnvironments": [
+    {
+      "root": "terminal_ai_agents_workshop",
+      "pythonVersion": "3.11"
+    },
+    {
+      "root": "tests",
+      "pythonVersion": "3.11",
+      "extraPaths": ["terminal_ai_agents_workshop"]
+    }
+  ]
+}
