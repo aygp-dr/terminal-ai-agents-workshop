@@ -207,11 +207,71 @@ Contributions are welcome! Please:
 * Resources
 
 ** Terminal AI Agents
-- [[https://github.com/anthropics/claude-code][Claude Code]] - Anthropic's terminal agent
-- [[https://github.com/paul-gauthier/aider][Aider]] - Git-aware AI pair programmer
-- [[https://github.com/sourcegraph/amp][Amp]] - Sourcegraph's unconstrained agent
-- [[https://ai.google.dev/gemini-api/docs][Gemini CLI]] - Google's multimodal AI agent
-- [[https://github.com/All-Hands-AI/OpenHands][OpenHands]] - Full development capabilities
+
+*** Agent Comparison Matrix
+
+| Agent | Version | Provider | Interface | Key Features |
+|-------+---------+----------+-----------+--------------|
+| [[https://github.com/anthropics/claude-code][Claude Code]] | 2.0.75 | Anthropic | CLI/Terminal | Agentic coding, file ops, bash, multi-tool orchestration |
+| [[https://docs.github.com/en/copilot/using-github-copilot/using-github-copilot-in-the-command-line][GitHub Copilot CLI]] | 1.1.1 | GitHub/Microsoft | CLI (=gh copilot=) | Explain/suggest commands, shell integration |
+| [[https://github.com/google-gemini/gemini-cli][Gemini CLI]] | 0.1.7 | Google | CLI/Terminal | Gemini 2.5 Pro, Google ecosystem, multimodal |
+| [[https://github.com/paul-gauthier/aider][Aider]] | - | Open Source | CLI/Terminal | Git-aware, multi-file editing, many LLM backends |
+| [[https://github.com/sourcegraph/amp][Amp]] | - | Sourcegraph | CLI/Terminal | Code search, multi-repo context, Cody-based |
+| [[https://github.com/All-Hands-AI/OpenHands][OpenHands]] | - | Open Source | Terminal/Web | Full development capabilities, sandboxed execution |
+| [[https://github.com/steveyegge/efrit][Efrit]] | 0.4.1 | Steve Yegge | Emacs | Native Elisp agent, 35+ tools, Claude-powered |
+
+*** Efrit - Native Emacs AI Agent
+
+Efrit is a *pure Elisp coding agent* that brings Claude directly into Emacs. Core philosophy: /"Claude makes all decisions, Efrit executes."/
+
+*Key Features:*
+- 35+ tools: code execution, file editing, codebase exploration, git, shell
+- Three modes: =efrit-chat= (conversation), =efrit-do= (quick tasks), =efrit-agent= (complex projects)
+- Safety controls: checkpoints, confirmations, timeout limits, shell restrictions
+- AI-to-AI communication via MCP file-based JSON queue
+
+*Installation:*
+
+#+begin_src elisp
+(use-package efrit
+  :load-path "~/path/to/efrit/lisp"
+  :commands (efrit-chat efrit-do efrit-agent efrit-remote-queue-start)
+  :bind (("C-c C-e c" . efrit-chat)
+         ("C-c C-e d" . efrit-do)
+         ("C-c C-e a" . efrit-agent)
+         ("C-c C-e q" . efrit-remote-queue-start))
+  :config
+  (setq efrit-default-model "claude-sonnet-4-5-20250929"))
+#+end_src
+
+*MCP Queue Communication:*
+
+Other AI agents (Claude Code, Cursor, etc.) can interact with Efrit via file-based JSON queues:
+
+#+begin_example
+~/.emacs.d/.efrit/
+├── queues/
+│   ├── requests/    # Drop JSON requests here
+│   ├── processing/  # Currently being processed
+│   ├── responses/   # Completed responses
+│   └── archive/     # Historical requests
+#+end_example
+
+Request format:
+
+#+begin_src json
+{
+  "id": "req_001",
+  "version": "1.0.0",
+  "type": "eval",
+  "content": "(buffer-name)",
+  "timestamp": "2025-12-21T12:00:00Z"
+}
+#+end_src
+
+Types: =eval= (elisp), =command= (natural language), =chat= (conversation), =status= (health check)
+
+*Emacs Versions Tested:* 28.2, 29.4, 30.1
 
 ** Research Papers and Literature
 - [[file:research/reading-list.org][Comprehensive Reading List]] - Annotated bibliography of 40+ papers
