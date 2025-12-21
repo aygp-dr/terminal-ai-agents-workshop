@@ -1,0 +1,223 @@
+#+TITLE: Terminal AI Agent Feature Comparison
+#+AUTHOR: aygp-dr
+#+DATE: 2025-12-21
+#+OPTIONS: toc:2 num:nil
+
+* System Information
+
+#+begin_example
+OS: FreeBSD nexus 14.3-RELEASE FreeBSD 14.3-RELEASE releng/14.3-n271432-8c9ce319fef7 GENERIC amd64
+Emacs: GNU Emacs 31.0.50 (Development version 26dcbd06eda1 on main branch; build date 2025-12-17)
+#+end_example
+
+* Agent Versions
+
+| Agent | Version | Released |
+|-------+---------+----------|
+| Claude Code | 2.0.75 | - |
+| Amp | 0.0.1766347278-gb13ec9 | 2025-12-21 |
+| Gemini CLI | 0.1.7 | - |
+| GitHub Copilot CLI | 1.1.1 | 2025-06-17 |
+| Efrit | 0.4.1 | - |
+
+* Feature Comparison Matrix
+
+** Core Capabilities
+
+| Feature | Claude Code | Amp | Gemini CLI | Copilot CLI | Efrit |
+|---------+-------------+-----+------------+-------------+-------|
+| Interactive REPL | Yes | Yes | Yes | No | Yes |
+| Non-interactive/Pipe | Yes (=-p=) | Yes (=-x=) | Yes (=-p=) | No | Yes |
+| Session persistence | Yes | Yes (threads) | No | No | Yes |
+| Resume sessions | Yes (=-r=, =-c=) | Yes (=continue=, =fork=) | No | No | Yes |
+| Streaming output | Yes | Yes | No | No | Yes |
+
+** Tool & MCP Support
+
+| Feature | Claude Code | Amp | Gemini CLI | Copilot CLI | Efrit |
+|---------+-------------+-----+------------+-------------+-------|
+| MCP servers | Yes | Yes | No | No | No |
+| Custom tools | Yes | Yes (toolbox) | No | No | Yes (35+) |
+| Tool permissions | Yes | Yes | No | N/A | Yes |
+| File editing | Yes | Yes | Yes | No | Yes |
+| Shell execution | Yes | Yes | Yes | No | Yes |
+| Git integration | Yes | Yes | No | No | Yes |
+
+** Model Configuration
+
+| Feature | Claude Code | Amp | Gemini CLI | Copilot CLI | Efrit |
+|---------+-------------+-----+------------+-------------+-------|
+| Model selection | Yes (=--model=) | Yes (=--use-sonnet=) | Yes (=-m=) | No | Yes |
+| Default model | Claude Sonnet | Claude Opus | Gemini 2.5 Pro | GPT-4 | Claude Sonnet |
+| Fallback model | Yes | No | No | No | No |
+| Multiple providers | No | No | No | No | No |
+
+** Permission & Safety
+
+| Feature | Claude Code | Amp | Gemini CLI | Copilot CLI | Efrit |
+|---------+-------------+-----+------------+-------------+-------|
+| Permission modes | Yes (5 modes) | Yes | No | N/A | Yes |
+| Bypass permissions | Yes (=--dangerously-skip-permissions=) | Yes (=--dangerously-allow-all=) | Yes (=-y= YOLO) | N/A | Yes |
+| Checkpointing | No | No | Yes (=-c=) | No | Yes |
+| File guardrails | Yes | Yes (=guardedFiles=) | No | No | Yes |
+
+** IDE Integration
+
+| Feature | Claude Code | Amp | Gemini CLI | Copilot CLI | Efrit |
+|---------+-------------+-----+------------+-------------+-------|
+| IDE connection | Yes (=--ide=) | Yes (=--ide=, =--jetbrains=) | No | No | Native Emacs |
+| VS Code | Yes | Yes | No | Yes | No |
+| JetBrains | No | Yes | No | Yes | No |
+| Emacs | No | No | No | No | Yes (native) |
+| Chrome | Yes (=--chrome=) | No | No | No | No |
+
+** Session & Thread Management
+
+| Feature | Claude Code | Amp | Gemini CLI | Copilot CLI | Efrit |
+|---------+-------------+-----+------------+-------------+-------|
+| List sessions | Yes | Yes (=threads list=) | No | No | Yes |
+| Search sessions | Yes | Yes (=threads search=) | No | No | No |
+| Share sessions | No | Yes (=threads share=) | No | No | No |
+| Fork sessions | Yes (=--fork-session=) | Yes (=threads fork=) | No | No | No |
+| Visibility control | No | Yes (private/public/workspace) | No | No | No |
+
+** Output Formats
+
+| Feature | Claude Code | Amp | Gemini CLI | Copilot CLI | Efrit |
+|---------+-------------+-----+------------+-------------+-------|
+| Plain text | Yes | Yes | Yes | Yes | Yes |
+| JSON | Yes | No | No | No | Yes |
+| Stream JSON | Yes | Yes | No | No | No |
+| Markdown export | No | Yes (=threads markdown=) | No | No | No |
+| JSON schema validation | Yes | No | No | No | No |
+
+** Configuration
+
+| Feature | Claude Code | Amp | Gemini CLI | Copilot CLI | Efrit |
+|---------+-------------+-----+------------+-------------+-------|
+| Config file | Yes (=--settings=) | Yes (=settings.json=) | No | Yes | Yes (=init.el=) |
+| System prompt | Yes (=--system-prompt=) | No | No | No | Yes |
+| Append system prompt | Yes | No | No | No | Yes |
+| Environment variables | Yes | Yes (=AMP_*=) | Yes | No | Yes |
+
+** Plugins & Extensions
+
+| Feature | Claude Code | Amp | Gemini CLI | Copilot CLI | Efrit |
+|---------+-------------+-----+------------+-------------+-------|
+| Plugin system | Yes (=plugin=) | Yes (=skill=) | No | No | Yes (elisp) |
+| Plugin directory | Yes (=--plugin-dir=) | Yes (=skill add=) | No | No | Yes (=load-path=) |
+| Marketplace | No | Yes (=skill publish=) | No | No | No |
+| Slash commands | Yes | No | No | No | No |
+
+** Unique Features
+
+*** Claude Code
+- =--json-schema= for structured output validation
+- =--betas= for API beta features
+- =--max-budget-usd= spending limits
+- Multiple permission modes (acceptEdits, bypassPermissions, default, delegate, dontAsk, plan)
+- Chrome browser integration
+
+*** Amp
+- Thread visibility (private, public, workspace, group)
+- Thread sharing and collaboration
+- =--mode= (free, rush, smart) for different agent behaviors
+- Toolbox for custom scripts
+- OAuth for MCP servers
+- Sound notifications
+- Cost display (=showCosts=)
+
+*** Gemini CLI
+- =--sandbox= for isolated execution
+- =--sandbox-image= for custom container
+- =--all_files= to include entire context
+- Memory usage display
+- Telemetry configuration options
+
+*** GitHub Copilot CLI
+- =explain= command for command explanation
+- =suggest= command for command suggestions
+- Shell alias generation
+- Focused on shell assistance (not general coding)
+
+*** Efrit
+- Native Emacs integration (Elisp)
+- 35+ built-in tools
+- MCP queue for AI-to-AI communication
+- Three modes: chat, do, agent
+- Checkpoint/restore for file edits
+- VCS integration (status, diff, log, blame)
+- Buffer and project context awareness
+
+* Command Quick Reference
+
+** Claude Code
+#+begin_src bash
+claude                           # Interactive session
+claude -p "prompt"               # Print mode (non-interactive)
+claude -c                        # Continue last session
+claude -r                        # Resume session picker
+claude --model opus              # Use specific model
+claude mcp add <server>          # Add MCP server
+claude plugin install <plugin>   # Install plugin
+claude doctor                    # Health check
+#+end_src
+
+** Amp
+#+begin_src bash
+amp                              # Interactive session
+amp -x "prompt"                  # Execute mode
+amp threads list                 # List threads
+amp threads continue             # Continue thread
+amp threads fork                 # Fork thread
+amp mcp add <name> -- <cmd>      # Add MCP server
+amp skill add <source>           # Add skill
+amp permissions list             # List permissions
+#+end_src
+
+** Gemini CLI
+#+begin_src bash
+gemini                           # Interactive session
+gemini -p "prompt"               # With prompt
+gemini -m gemini-2.5-pro         # Specify model
+gemini -y                        # YOLO mode (auto-accept)
+gemini -s                        # Sandbox mode
+gemini -c                        # Enable checkpointing
+#+end_src
+
+** GitHub Copilot CLI
+#+begin_src bash
+gh copilot suggest "command"     # Suggest a command
+gh copilot explain "command"     # Explain a command
+gh copilot alias                 # Generate shell aliases
+gh copilot config                # Configure options
+#+end_src
+
+** Efrit (Emacs)
+#+begin_src elisp
+M-x efrit-chat                   ; Multi-turn conversation
+M-x efrit-do                     ; Execute command
+M-x efrit-agent                  ; Complex task session
+M-x efrit-remote-queue-start     ; Start MCP queue
+M-x efrit-doctor                 ; Health check
+#+end_src
+
+* Environment Variables
+
+| Variable | Agent | Purpose |
+|----------+-------+---------|
+| =ANTHROPIC_API_KEY= | Claude Code, Efrit | API authentication |
+| =AMP_API_KEY= | Amp | API authentication |
+| =AMP_URL= | Amp | Custom API endpoint |
+| =AMP_LOG_LEVEL= | Amp | Logging verbosity |
+| =AMP_SETTINGS_FILE= | Amp | Config file path |
+| =GEMINI_API_KEY= | Gemini CLI | API authentication |
+| =GITHUB_TOKEN= | Copilot CLI | GitHub authentication |
+
+* See Also
+
+- [[https://github.com/anthropics/claude-code][Claude Code Repository]]
+- [[https://ampcode.com][Amp Website]]
+- [[https://github.com/google-gemini/gemini-cli][Gemini CLI Repository]]
+- [[https://docs.github.com/en/copilot/using-github-copilot/using-github-copilot-in-the-command-line][GitHub Copilot CLI Docs]]
+- [[https://github.com/steveyegge/efrit][Efrit Repository]]
