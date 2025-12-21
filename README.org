@@ -216,7 +216,7 @@ Contributions are welcome! Please:
 | [[https://docs.github.com/en/copilot/using-github-copilot/using-github-copilot-in-the-command-line][GitHub Copilot CLI]] | 1.1.1 | GitHub/Microsoft | CLI (=gh copilot=) | Explain/suggest commands, shell integration |
 | [[https://github.com/google-gemini/gemini-cli][Gemini CLI]] | 0.1.7 | Google | CLI/Terminal | Gemini 2.5 Pro, Google ecosystem, multimodal |
 | [[https://github.com/paul-gauthier/aider][Aider]] | - | Open Source | CLI/Terminal | Git-aware, multi-file editing, many LLM backends |
-| [[https://github.com/sourcegraph/amp][Amp]] | - | Sourcegraph | CLI/Terminal | Code search, multi-repo context, Cody-based |
+| [[https://ampcode.com][Amp]] | 0.0.1766347278 | Sourcegraph | CLI/Terminal | Code search, multi-repo context, Cody-based |
 | [[https://github.com/All-Hands-AI/OpenHands][OpenHands]] | - | Open Source | Terminal/Web | Full development capabilities, sandboxed execution |
 | [[https://github.com/steveyegge/efrit][Efrit]] | 0.4.1 | Steve Yegge | Emacs | Native Elisp agent, 35+ tools, Claude-powered |
 
