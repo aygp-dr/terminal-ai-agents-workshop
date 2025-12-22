@@ -1,0 +1,451 @@
+#+TITLE: Terminal AI Agents: High-Level Design & Future Roadmap
+#+AUTHOR: aygp-dr
+#+DATE: 2025-12-21
+#+OPTIONS: toc:3 num:t
+
+* Executive Summary
+
+Terminal AI agents represent a paradigm shift in developer tooling, bringing LLM capabilities directly into the command line workflow. This document analyzes the architectural patterns across five major agents and projects likely feature evolution based on current trajectories and market demands.
+
+* High-Level Architecture
+
+** Common Architecture Pattern
+
+All terminal AI agents share a similar high-level architecture:
+
+#+begin_example
+┌─────────────────────────────────────────────────────────────────┐
+│                        User Interface Layer                      │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────────┐ │
+│  │   CLI    │  │   REPL   │  │  Editor  │  │  Pipe/Streaming  │ │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      Session Management Layer                    │
+│  ┌──────────────┐  ┌──────────────┐  ┌────────────────────────┐ │
+│  │   Context    │  │   History    │  │   Persistence/Resume   │ │
+│  └──────────────┘  └──────────────┘  └────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                         Agent Core Layer                         │
+│  ┌──────────────┐  ┌──────────────┐  ┌────────────────────────┐ │
+│  │  Reasoning   │  │   Planning   │  │   Tool Orchestration   │ │
+│  └──────────────┘  └──────────────┘  └────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                          Tool Layer                              │
+│  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐  ┌───────────┐ │
+│  │  File  │  │  Shell │  │   Git  │  │  Web   │  │    MCP    │ │
+│  └────────┘  └────────┘  └────────┘  └────────┘  └───────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                       LLM Provider Layer                         │
+│  ┌──────────────┐  ┌──────────────┐  ┌────────────────────────┐ │
+│  │   Anthropic  │  │    Google    │  │        OpenAI          │ │
+│  └──────────────┘  └──────────────┘  └────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+#+end_example
+
+** Agent-Specific Architectures
+
+*** Claude Code Architecture
+#+begin_example
+┌─────────────────────────────────────────────┐
+│              Claude Code CLI                 │
+├─────────────────────────────────────────────┤
+│  Permission System (5 modes)                 │
+│  ├── acceptEdits                            │
+│  ├── bypassPermissions                      │
+│  ├── default                                │
+│  ├── delegate                               │
+│  └── plan                                   │
+├─────────────────────────────────────────────┤
+│  Plugin System                               │
+│  ├── Slash Commands                         │
+│  ├── Hooks                                  │
+│  └── Custom Plugins                         │
+├─────────────────────────────────────────────┤
+│  MCP Integration                             │
+│  └── Stdio-based server communication       │
+├─────────────────────────────────────────────┤
+│  Output Modes                                │
+│  ├── Interactive                            │
+│  ├── Print (-p)                             │
+│  ├── JSON                                   │
+│  └── Stream-JSON                            │
+└─────────────────────────────────────────────┘
+#+end_example
+
+*** Amp Architecture
+#+begin_example
+┌─────────────────────────────────────────────┐
+│                  Amp CLI                     │
+├─────────────────────────────────────────────┤
+│  Thread System                               │
+│  ├── Visibility (private/public/workspace)  │
+│  ├── Sharing                                │
+│  ├── Forking                                │
+│  └── Search                                 │
+├─────────────────────────────────────────────┤
+│  Mode System                                 │
+│  ├── free (cost-optimized)                  │
+│  ├── rush (speed-optimized)                 │
+│  └── smart (balanced)                       │
+├─────────────────────────────────────────────┤
+│  Skill/Toolbox System                        │
+│  ├── GitHub-sourced skills                  │
+│  ├── Local toolbox scripts                  │
+│  └── Marketplace publishing                 │
+├─────────────────────────────────────────────┤
+│  MCP with OAuth                              │
+│  └── Remote MCP server support              │
+└─────────────────────────────────────────────┘
+#+end_example
+
+*** Efrit Architecture
+#+begin_example
+┌─────────────────────────────────────────────┐
+│              Efrit (Emacs)                   │
+├─────────────────────────────────────────────┤
+│  Pure Executor Model                         │
+│  └── "Claude decides, Efrit executes"       │
+├─────────────────────────────────────────────┤
+│  Interface Modes                             │
+│  ├── efrit-chat (conversation)              │
+│  ├── efrit-do (quick commands)              │
+│  └── efrit-agent (complex sessions)         │
+├─────────────────────────────────────────────┤
+│  35+ Native Tools                            │
+│  ├── Code execution (eval_sexp, shell)      │
+│  ├── File editing (edit, create, undo)      │
+│  ├── Codebase (search, read, project)       │
+│  ├── VCS (status, diff, log, blame)         │
+│  ├── Safety (checkpoint, confirm)           │
+│  └── External (web, fetch, image)           │
+├─────────────────────────────────────────────┤
+│  MCP Queue (AI-to-AI)                        │
+│  ├── requests/                              │
+│  ├── processing/                            │
+│  ├── responses/                             │
+│  └── archive/                               │
+└─────────────────────────────────────────────┘
+#+end_example
+
+* Current State Analysis
+
+** Strengths by Agent
+
+| Agent | Primary Strengths |
+|-------+-------------------|
+| Claude Code | Best permission model, JSON schema validation, Chrome integration |
+| Amp | Thread collaboration, skill marketplace, mode flexibility |
+| Gemini CLI | Sandbox execution, simple interface, Google ecosystem |
+| Copilot CLI | Shell command expertise, GitHub integration |
+| Efrit | Deep Emacs integration, AI-to-AI communication, extensive tooling |
+
+** Gaps by Agent
+
+| Agent | Current Gaps |
+|-------+--------------|
+| Claude Code | No collaboration features, limited IDE support |
+| Amp | No structured output validation, no checkpoint/restore |
+| Gemini CLI | No session persistence, no MCP support, limited tools |
+| Copilot CLI | Not a full agent (explain/suggest only), no file editing |
+| Efrit | Emacs-only, no multi-provider support |
+
+* Future Feature Roadmap
+
+** Claude Code Projected Features
+
+*** Near-term (3-6 months)
+1. *Collaborative Sessions*
+   - Share sessions with team members
+   - Real-time collaboration on code changes
+   - Session visibility controls (private/team/public)
+
+2. *Enhanced IDE Integration*
+   - Native JetBrains plugin
+   - Neovim integration
+   - Universal LSP bridge
+
+3. *Workspace Awareness*
+   - Multi-repository context
+   - Monorepo support improvements
+   - Cross-project refactoring
+
+*** Mid-term (6-12 months)
+4. *Agent Orchestration*
+   - Sub-agent spawning for parallel tasks
+   - Agent-to-agent communication protocol
+   - Workflow automation with agent chains
+
+5. *Enterprise Features*
+   - SSO integration
+   - Audit logging
+   - Usage analytics dashboard
+   - Team permission policies
+
+6. *Advanced Safety*
+   - Semantic diff previews
+   - Rollback capabilities
+   - Change impact analysis
+
+*** Long-term (12+ months)
+7. *Multi-Provider Support*
+   - OpenAI GPT integration
+   - Google Gemini as fallback
+   - Local model support (Ollama)
+
+8. *Visual Capabilities*
+   - Screenshot analysis in terminal
+   - Diagram generation
+   - UI component suggestions
+
+** Amp Projected Features
+
+*** Near-term (3-6 months)
+1. *Structured Output*
+   - JSON schema validation (matching Claude Code)
+   - Type-safe responses
+   - Custom output formats
+
+2. *Enhanced Checkpointing*
+   - File edit checkpoints
+   - Automatic rollback on failure
+   - Checkpoint branching
+
+3. *Offline Mode*
+   - Local model fallback
+   - Cached responses for common queries
+   - Reduced latency mode
+
+*** Mid-term (6-12 months)
+4. *Team Workspaces*
+   - Shared thread libraries
+   - Team skill repositories
+   - Collaborative editing
+
+5. *Advanced Permissions*
+   - Role-based access control
+   - Per-project permission policies
+   - Audit trails
+
+6. *CI/CD Integration*
+   - GitHub Actions integration
+   - GitLab CI support
+   - Automated PR review
+
+*** Long-term (12+ months)
+7. *Amp Orchestrator*
+   - Multi-agent coordination
+   - Task queue management
+   - Priority scheduling
+
+8. *Learning System*
+   - Learn from corrections
+   - Project-specific fine-tuning
+   - Team coding style adaptation
+
+** Gemini CLI Projected Features
+
+*** Near-term (3-6 months)
+1. *Session Persistence*
+   - Save/resume conversations
+   - Session history search
+   - Session export/import
+
+2. *MCP Support*
+   - Basic MCP server integration
+   - Google-specific MCP tools
+   - Cloud function tools
+
+3. *Enhanced Sandbox*
+   - Custom container templates
+   - Persistent sandbox volumes
+   - Network policy controls
+
+*** Mid-term (6-12 months)
+4. *Google Cloud Integration*
+   - Cloud Run deployment
+   - BigQuery tool integration
+   - Vertex AI model selection
+
+5. *Multimodal Expansion*
+   - Video input analysis
+   - Audio transcription integration
+   - Document understanding
+
+6. *Tool Ecosystem*
+   - Custom tool definition
+   - Tool marketplace
+   - Third-party integrations
+
+*** Long-term (12+ months)
+7. *Workspace Intelligence*
+   - Project understanding
+   - Codebase indexing
+   - Semantic search
+
+8. *Enterprise Features*
+   - Google Workspace integration
+   - Team management
+   - Compliance controls
+
+** GitHub Copilot CLI Projected Features
+
+*** Near-term (3-6 months)
+1. *Full Agent Capabilities*
+   - File editing (beyond suggest/explain)
+   - Multi-step task execution
+   - Session persistence
+
+2. *Repository Context*
+   - Full repo awareness
+   - Issue/PR integration
+   - Code review assistance
+
+3. *GitHub Actions Integration*
+   - Workflow generation
+   - Action debugging
+   - Pipeline optimization
+
+*** Mid-term (6-12 months)
+4. *Copilot Workspace CLI*
+   - Terminal access to Workspace features
+   - Plan/implement/review workflow
+   - Branch management
+
+5. *Security Features*
+   - Secret detection
+   - Vulnerability scanning
+   - Dependency analysis
+
+6. *Team Features*
+   - Shared command history
+   - Team aliases
+   - Usage analytics
+
+*** Long-term (12+ months)
+7. *Full Agentic Mode*
+   - Autonomous task completion
+   - MCP integration
+   - Custom tool support
+
+8. *Enterprise Integration*
+   - GitHub Enterprise Server support
+   - SAML/SSO integration
+   - Audit logging
+
+** Efrit Projected Features
+
+*** Near-term (3-6 months)
+1. *Enhanced MCP Queue*
+   - WebSocket-based communication
+   - Bi-directional streaming
+   - Queue prioritization
+
+2. *Multi-Model Support*
+   - OpenAI integration
+   - Gemini integration
+   - Local models (llama.cpp)
+
+3. *Improved Safety*
+   - Enhanced checkpoint system
+   - Diff preview improvements
+   - Undo tree visualization
+
+*** Mid-term (6-12 months)
+4. *IDE Bridge*
+   - VS Code extension for Efrit queue
+   - Universal Emacs-to-IDE bridge
+   - Remote Emacs support
+
+5. *Org-mode Integration*
+   - Literate programming support
+   - Org-babel code execution
+   - Document generation
+
+6. *Package Management*
+   - MELPA/ELPA tool packages
+   - Tool dependency resolution
+   - Version management
+
+*** Long-term (12+ months)
+7. *Distributed Efrit*
+   - Multi-Emacs coordination
+   - Remote queue processing
+   - Cloud-hosted Efrit instances
+
+8. *Enterprise Emacs*
+   - Team configuration sharing
+   - Centralized tool management
+   - Usage analytics
+
+* Cross-Agent Convergence Trends
+
+** Likely Industry-Wide Features (12-24 months)
+
+1. *Standardized MCP Protocol*
+   - All agents supporting MCP
+   - Common tool definitions
+   - Interoperable servers
+
+2. *AI-to-AI Communication*
+   - Standard message format
+   - Agent discovery protocol
+   - Task delegation
+
+3. *Unified Permission Model*
+   - Industry-standard permission levels
+   - Cross-agent policy sharing
+   - Compliance frameworks
+
+4. *Multi-Provider Support*
+   - Model-agnostic architecture
+   - Dynamic provider selection
+   - Cost optimization
+
+5. *Enterprise Standards*
+   - SOC 2 compliance
+   - GDPR support
+   - Audit logging standards
+
+* Recommendations
+
+** For Users
+1. Choose agent based on primary workflow (IDE vs terminal vs Emacs)
+2. Invest in MCP servers for extensibility
+3. Establish permission policies early
+4. Track session history for knowledge retention
+
+** For Agent Developers
+1. Prioritize MCP adoption for ecosystem compatibility
+2. Implement checkpoint/rollback for safety
+3. Add collaboration features for team adoption
+4. Support structured output for automation
+
+** For Organizations
+1. Evaluate agents based on security requirements
+2. Consider multi-agent strategies
+3. Plan for agent-to-agent workflows
+4. Invest in custom tool development
+
+* Conclusion
+
+Terminal AI agents are rapidly evolving from simple chat interfaces to sophisticated development platforms. The key differentiators are:
+
+- *Claude Code*: Permission model and plugin ecosystem
+- *Amp*: Collaboration and mode flexibility
+- *Gemini CLI*: Sandboxing and Google integration
+- *Copilot CLI*: GitHub ecosystem integration
+- *Efrit*: Emacs-native AI and AI-to-AI communication
+
+The future will likely see convergence around MCP, multi-provider support, and enterprise features, while each agent maintains its unique strengths in specific workflows.
