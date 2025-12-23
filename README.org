@@ -253,7 +253,7 @@ Not all agents work on FreeBSD 14.3. Current status:
 | Aider | ❌ Build fails | tree-sitter packages need =parser.h= |
 | OpenAI Codex CLI | ❌ Unsupported | Explicit FreeBSD check in code |
 | Goose | ⚠️ Dep issues | langfuse.decorators module missing |
-| Open Interpreter | 🔄 Testing | Large build, untested |
+| Open Interpreter | ✅ Works | v0.4.3, 44min build |
 
 *** Efrit - Native Emacs AI Agent
 
