@@ -229,6 +229,16 @@ M-x efrit-doctor                 ; Health check
 | OpenCode | Multi-provider agent | GitHub source | 75+ LLM providers |
 | Aider | Git-aware coding | =pipx install aider-chat= | tree-sitter build fails |
 | Amazon Q CLI | AWS-focused agent | AWS installer | Enterprise |
+| Cursor CLI | Full terminal agent | =curl cursor.com/install \| bash= | Beta, MCP support |
+| Continue | TUI + headless agent | =pip install continue= | Async agents, scripting |
+| Plandex | Multi-file planner | =curl plandex.ai/install.sh \| bash= | 2M token context |
+| Mentat | Project-aware agent | =pip install mentat= | 38% SWE-bench Lite |
+| gptme | Personal AI agent | =pip install gptme= | Shell, Python, vision |
+| Rawdog | Python exec agent | =pip install rawdog-ai= | Self-selecting context |
+| Rovo Dev CLI | Atlassian agent | Atlassian installer | 42% SWE-bench, Jira |
+| Devika | Open-source Devin | GitHub source | Multi-LLM, research |
+| SWE-agent | Issue resolver | GitHub source | Princeton NLP research |
+| Google Jules | Autonomous coding | Google Cloud | CI/CD integration |
 
 * FreeBSD Compatibility Notes
 

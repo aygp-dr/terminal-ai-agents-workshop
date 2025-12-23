@@ -225,6 +225,19 @@ Contributions are welcome! Please:
 | [[https://github.com/cline/cline][Cline]] | - | Open Source | VS Code | Agentic coding, MCP tools, multi-provider |
 | [[https://github.com/opencode-ai/opencode][OpenCode]] | - | Open Source | CLI/Terminal | 75+ LLM providers, extensible |
 | [[https://aws.amazon.com/q/][Amazon Q CLI]] | - | AWS | CLI/Terminal | AWS ecosystem, enterprise security |
+| [[https://cursor.com/blog/cli][Cursor CLI]] | - | Cursor | CLI/Terminal | Full agent from terminal, MCP support |
+| [[https://www.continue.dev/][Continue]] | - | Open Source | CLI/IDE | TUI + headless modes, async agents |
+| [[https://github.com/plandex-ai/plandex][Plandex]] | - | Open Source | CLI/Terminal | 2M token context, multi-file planning |
+| [[https://mentat.ai/][Mentat]] | - | Abante AI | CLI/Terminal | Multi-file editing, project context |
+| [[https://github.com/gptme/gptme][gptme]] | - | Open Source | CLI/Terminal | Shell, Python, browser, vision tools |
+| [[https://github.com/AbanteAI/rawdog][Rawdog]] | - | Abante AI | CLI/Terminal | Self-selecting context, Python exec |
+| [[https://www.atlassian.com/software/rovo][Rovo Dev CLI]] | - | Atlassian | CLI/Terminal | 42% SWE-bench, Jira integration |
+| [[https://zed.dev/acp][Zed ACP Agents]] | - | Zed | IDE/CLI | Agent Client Protocol, multi-agent |
+| [[https://windsurf.com/][Windsurf]] | - | Codeium | IDE | Agentic IDE, Devin features |
+| [[https://www.qodo.ai/][Qodo]] | - | Qodo | IDE/CLI | Enterprise code review, CI/CD |
+| [[https://devikaai.org/][Devika]] | - | Open Source | Web/CLI | Open-source Devin alternative |
+| [[https://github.com/SWE-agent/SWE-agent][SWE-agent]] | - | Princeton NLP | CLI/Terminal | GitHub issue resolution, research |
+| [[https://github.com/stitionai/devika][Google Jules]] | - | Google | CLI/API | Autonomous coding, CI/CD pipelines |
 
 *** FreeBSD Compatibility Notes
 
@@ -300,6 +313,12 @@ Types: =eval= (elisp), =command= (natural language), =chat= (conversation), =sta
 - [[https://arxiv.org/abs/2210.03629][ReAct: Reasoning and Acting (2022)]] - Foundational paradigm
 - [[https://arxiv.org/abs/2405.15793][SWE-agent (2024)]] - Software engineering agents
 - [[https://www.swebench.com][SWE-bench]] - Real-world software engineering benchmark
+
+** Benchmarks & Evaluation
+- [[https://www.swebench.com][SWE-bench]] - GitHub issue resolution (2,294 tasks)
+- [[https://scale.com/leaderboard/swe_bench_pro_public][SWE-bench Pro]] - Harder variant (top models ~23%)
+- [[https://www.tbench.ai][Terminal-Bench]] - Real terminal task evaluation (Stanford/Laude)
+- [[https://livebench.ai][LiveBench]] - Continuously updated benchmarks
 
 ** Documentation
 - [[https://docs.anthropic.com/claude/docs/tool-use][Anthropic Tool Use]]
