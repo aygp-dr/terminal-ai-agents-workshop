@@ -1,0 +1,259 @@
+#+TITLE: Terminal AI Agents: The 2025 Landscape
+#+AUTHOR: Terminal AI Agents Workshop
+#+DATE: December 2025
+#+OPTIONS: toc:3 num:nil ^:nil
+#+STARTUP: showall
+
+* The Rise of Terminal AI Agents
+
+#+begin_quote
+"Our big bet is that there's a future in which 95% of LLM-computer interaction is through a terminal-like interface."
+--- Mike Merrill, Co-creator of Terminal-Bench (Stanford)
+#+end_quote
+
+In 2025, AI coding tools shifted to a surprising place: *the terminal*. Since February 2025, Anthropic, Google, and OpenAI have all released command-line coding tools, and they're already among the companies' most popular products.
+
+CLI coding agents now "fill a sweet spot" between heavy IDE copilots and web-based generators by being *lighter, faster*, and plugging directly into familiar workflows.
+
+** Industry Adoption
+
+- *53%* of companies experimenting with LLMs for development have deployed to production (a16z Enterprise AI Report 2024)
+- *75%* of enterprise software engineers will use AI assistants by 2028, up from <10% in 2023 (Gartner 2025)
+- Terminal agents are the *fastest-growing category* of AI developer tools
+
+* GitHub Stars Leaderboard (December 2025)
+
+| Rank | Agent | Stars | Provider | Key Strength |
+|------+-------+-------+----------+--------------|
+| 1 | [[https://github.com/google-gemini/gemini-cli][Gemini CLI]] | 88.3k | Google | Free tier (1000 req/day) |
+| 2 | [[https://github.com/All-Hands-AI/OpenHands][OpenHands]] | 65.8k | Open Source | Full dev capabilities |
+| 3 | [[https://github.com/openinterpreter/open-interpreter][Open Interpreter]] | 61.2k | Open Source | Natural language computing |
+| 4 | [[https://github.com/cline/cline][Cline]] | 56.3k | Open Source | VS Code + Plan Mode |
+| 5 | [[https://github.com/AntonOsika/gpt-engineer][GPT Engineer]] | 55.1k | Open Source | Spec-to-code generation |
+| 6 | [[https://github.com/openai/codex][OpenAI Codex CLI]] | 54.5k | OpenAI | Lightweight, sandboxed |
+| 7 | [[https://github.com/anthropics/claude-code][Claude Code]] | 48.0k | Anthropic | Best-in-class reasoning |
+| 8 | [[https://github.com/Aider-AI/aider][Aider]] | 39.1k | Open Source | Git-native, 84.9% accuracy |
+| 9 | [[https://github.com/continuedev/continue][Continue]] | 30.5k | Open Source | TUI + headless modes |
+| 10 | [[https://github.com/block/goose][Goose]] | 24.9k | Block/Square | Local-first, extensible |
+| 11 | [[https://github.com/stitionai/devika][Devika]] | 19.5k | Open Source | Open-source Devin |
+| 12 | [[https://github.com/SWE-agent/SWE-agent][SWE-agent]] | 18.1k | Princeton NLP | Research benchmark leader |
+| 13 | [[https://github.com/plandex-ai/plandex][Plandex]] | 14.8k | Open Source | 2M token context |
+| 14 | [[https://github.com/gptme/gptme][gptme]] | 4.1k | Open Source | Shell, Python, vision |
+| 15 | [[https://github.com/steveyegge/efrit][Efrit]] | 338 | Steve Yegge | Native Emacs, 35+ tools |
+
+* The Big Three: Enterprise Terminal Agents
+
+** Claude Code (Anthropic)
+#+begin_quote
+"Claude Code is an agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster."
+#+end_quote
+
+- *Released*: February 24, 2025
+- *Stars*: 48,023
+- *SWE-bench*: 72%+ (leading published scores)
+- *Install*: =npm install -g @anthropic-ai/claude-code=
+
+*Key Features:*
+- Multi-tool orchestration with MCP protocol
+- Docker sandboxing and offline capability
+- VS Code extension for IDE integration
+- Permission system (5 modes) for enterprise control
+- JSON schema validation for structured output
+
+*Best For*: Professional development, enterprise teams, complex multi-file refactoring
+
+** Gemini CLI (Google)
+#+begin_quote
+"Free and open source, Gemini CLI brings Gemini directly into developers' terminals."
+#+end_quote
+
+- *Stars*: 88,306 (highest among terminal agents)
+- *Free Tier*: 1,000 requests/day with 1M-token context window
+- *Install*: =npm install -g @google/gemini-cli=
+
+*Key Features:*
+- Native Google service tools integration
+- Sandbox execution with custom containers
+- Multimodal support (images, documents)
+- Action chaining and background tasks
+
+*Cons*: High token consumption, limited third-party tool integration
+
+** OpenAI Codex CLI
+#+begin_quote
+"Lightweight coding agent that runs in your terminal."
+#+end_quote
+
+- *Released*: April 16, 2025
+- *Stars*: 54,514
+- *Install*: =npm install -g @openai/codex=
+
+*Key Features:*
+- Works with ChatGPT subscription (cost-effective)
+- Full customizability and configuration
+- Multi-language support with quick refactoring
+
+*Cons*: External API integration can reduce accuracy
+
+* Open Source Champions
+
+** Aider - The Git-Native Agent
+#+begin_quote
+"AI Pair Programming in your terminal"
+#+end_quote
+
+- *Stars*: 39,129
+- *Accuracy*: 84.9% on polyglot test suite (225 examples)
+- *Install*: =pip install aider-chat=
+
+*Why Developers Love It:*
+- Repository mapping understands entire codebase
+- LSP integration for intelligent navigation
+- Automatic git commits with sensible messages
+- Works with Claude 3.7, DeepSeek, GPT-4o, o1, o3, local models
+- Voice input support
+
+** Continue - The Extensible Platform
+- *Stars*: 30,453
+- *Enterprise Users*: Siemens, Morningstar
+- *Install*: =npm install -g @continue/cli=
+
+*Features:*
+- TUI mode (interactive) + Headless mode (automation)
+- Custom assistant framework with community hub
+- VS Code and JetBrains plugins
+- Async agents for background tasks
+
+** Goose - Local-First by Block
+- *Stars*: 24,922
+- *Philosophy*: "Transparency: you can see exactly what the agent is doing"
+
+*Features:*
+- No cloud calls - runs entirely locally
+- Shell command execution and browser automation
+- Iterative debugging with full visibility
+- Enterprise integration potential
+
+** gptme - The Personal Agent
+- *Stars*: 4,089
+- *Install*: =pip install gptme=
+
+*Unique Capabilities:*
+- Shell, Python, browser, and vision tools
+- Can access terminal outputs, screenshots, web pages
+- Self-correction feedback loop
+- Works as GitHub bot or web interface
+
+* Specialized & Research Agents
+
+** Plandex - For Large Projects
+- *Stars*: 14,781
+- *Context*: Up to 2M tokens (~100k per file)
+- *Status*: Winding down as of Oct 2025
+
+*Designed For:*
+- Multi-file workflows spanning dozens of files
+- Context-caching and diff sandboxing
+- Million-token codebase indexing
+
+** SWE-agent - Research Leader
+- *Stars*: 18,075
+- *From*: Princeton NLP (creators of SWE-bench)
+- *Performance*: 12.29% on full SWE-bench in ~93 seconds
+
+*Focus:* GitHub issue resolution, research benchmarking
+
+** Devika - Open-Source Devin Alternative
+- *Stars*: 19,477
+- *Models*: Claude 3, GPT-4, GPT-3.5, Ollama local
+
+*Features:*
+- Advanced AI planning and reasoning
+- Contextual keyword extraction
+- Web browsing and information gathering
+- Multi-language code generation
+
+* Emerging Protocols & Standards
+
+** MCP (Model Context Protocol)
+Anthropic's protocol for tool integration, adopted by:
+- Claude Code
+- Cursor CLI
+- Cline
+- Continue
+
+** ACP (Agent Client Protocol)
+Zed's open standard for agent-editor integration:
+- Multi-IDE support (Zed, JetBrains coming)
+- No vendor lock-in
+- Apache licensed
+
+#+begin_quote
+"Any agent on ACP gains access to Zed's multi-file editing, full codebase context, and powerful reviewing tools."
+#+end_quote
+
+* Benchmarks & Evaluation
+
+| Benchmark | Focus | Top Performance |
+|-----------+-------+-----------------|
+| [[https://www.swebench.com][SWE-bench]] | GitHub issue resolution | Claude Code 72%+ |
+| [[https://scale.com/leaderboard/swe_bench_pro_public][SWE-bench Pro]] | Harder variant | GPT-5/Claude Opus ~23% |
+| [[https://www.tbench.ai][Terminal-Bench]] | Real terminal tasks | Featured on Claude 4 card |
+| [[https://livebench.ai][LiveBench]] | Continuously updated | Varies by model |
+
+*Key Insight:* SWE-bench Pro reveals massive performance drops vs Verified version, highlighting gap between benchmarks and real-world difficulty.
+
+* Why Claude Code?
+
+For developers who value:
+
+1. *Reasoning Quality*: Claude's chain-of-thought excels at complex refactoring
+2. *Enterprise Security*: 5 permission modes, audit-ready
+3. *MCP Ecosystem*: Growing tool marketplace
+4. *Accuracy*: Leading SWE-bench scores
+5. *Workflow Integration*: Git-native, VS Code extension
+
+#+begin_src bash
+# Get started in 30 seconds
+npm install -g @anthropic-ai/claude-code
+export ANTHROPIC_API_KEY="your-key"
+claude
+#+end_src
+
+* Comparison: Closed vs Open Source
+
+| Factor | Closed-Source | Open-Source |
+|--------+---------------+-------------|
+| *Data Security* | Vendor cloud | Self-hosted option |
+| *Cost* | $10-20/dev/month | Free + infra costs |
+| *Transparency* | Opaque | Full source inspection |
+| *Customization* | Limited | Highly customizable |
+| *Support* | Professional | Community-driven |
+| *Performance* | State-of-the-art | Rapidly improving |
+
+*Trend:* Organizations adopting hybrid approaches - vendor tools for general development, open-source for sensitive projects.
+
+* Resources
+
+** This Workshop
+- [[https://github.com/aygp-dr/terminal-ai-agents-workshop][Terminal AI Agents Workshop]] - Hands-on labs and comparisons
+- [[file:agent-feature-comparison.org][Feature Comparison Matrix]] - Detailed feature analysis
+- [[file:terminal-agents-design.org][Architecture & Roadmap]] - Future feature predictions
+
+** External
+- [[https://www.kdnuggets.com/top-5-agentic-coding-cli-tools][KDnuggets: Top 5 Agentic CLI Tools]]
+- [[https://dev.to/forgecode/top-10-open-source-cli-coding-agents-you-should-be-using-in-2025-with-links-244m][DEV.to: Top 10 Open-Source CLI Agents]]
+- [[https://www.shakudo.io/blog/best-ai-coding-assistants][Shakudo: Best AI Coding Assistants Dec 2025]]
+- [[https://techcrunch.com/2025/07/15/ai-coding-tools-are-shifting-to-a-surprising-place-the-terminal/][TechCrunch: AI Coding Tools Shifting to Terminal]]
+
+* Conclusion
+
+The terminal is where professional developers live. In 2025, AI finally met them there.
+
+Claude Code leads in reasoning and enterprise features. Gemini CLI wins on free tier generosity. Aider dominates git-native workflows. The open-source ecosystem (OpenHands, Cline, Continue) offers unmatched customization.
+
+*The future is agentic, and it runs in your terminal.*
+
+#+begin_example
+$ claude "refactor this codebase to use dependency injection"
+#+end_example
