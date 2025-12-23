@@ -12,13 +12,17 @@ Emacs: GNU Emacs 31.0.50 (Development version 26dcbd06eda1 on main branch; build
 
 * Agent Versions
 
-| Agent | Version | Released |
-|-------+---------+----------|
-| Claude Code | 2.0.75 | - |
-| Amp | 0.0.1766347278-gb13ec9 | 2025-12-21 |
-| Gemini CLI | 0.1.7 | - |
-| GitHub Copilot CLI | 1.1.1 | 2025-06-17 |
-| Efrit | 0.4.1 | - |
+| Agent | Version | Released | FreeBSD Status |
+|-------+---------+----------+----------------|
+| Claude Code | 2.0.75 | - | ✅ Works |
+| Amp | 0.0.1766347278-gb13ec9 | 2025-12-21 | ✅ Works |
+| Gemini CLI | 0.1.7 | - | ✅ Works |
+| GitHub Copilot CLI | 1.1.1 | 2025-06-17 | ✅ Works |
+| Efrit | 0.4.1 | - | ✅ Works |
+| OpenAI Codex CLI | 0.77.0 | 2025-12-21 | ❌ Unsupported |
+| Goose | 0.9.11 | - | ⚠️ Dep issues |
+| Open Interpreter | - | - | 🔄 Untested |
+| Aider | 0.86.1 | - | ❌ Build fails |
 
 * Feature Comparison Matrix
 
@@ -214,6 +218,39 @@ M-x efrit-doctor                 ; Health check
 | =GEMINI_API_KEY= | Gemini CLI | API authentication |
 | =GITHUB_TOKEN= | Copilot CLI | GitHub authentication |
 
+* Additional Agents (Not Fully Tested)
+
+| Agent | Description | Install | Notes |
+|-------+-------------+---------+-------|
+| OpenAI Codex CLI | GPT-powered coding agent | =npm i -g @openai/codex= | FreeBSD unsupported |
+| Goose | Local-first AI agent | =uv tool install goose-ai= | langfuse dependency issue |
+| Open Interpreter | Code execution agent | =uv tool install open-interpreter= | Large install, untested |
+| Cline | VS Code extension | VS Code marketplace | IDE-only |
+| OpenCode | Multi-provider agent | GitHub source | 75+ LLM providers |
+| Aider | Git-aware coding | =pipx install aider-chat= | tree-sitter build fails |
+| Amazon Q CLI | AWS-focused agent | AWS installer | Enterprise |
+
+* FreeBSD Compatibility Notes
+
+FreeBSD 14.3 has limited support for some agents:
+
+** Working Agents
+- *Claude Code*: Full support via Node.js
+- *Amp*: Full support via Go binary
+- *Gemini CLI*: Full support via npm
+- *GitHub Copilot CLI*: Works via =gh= extension
+- *Efrit*: Pure Elisp, works anywhere Emacs runs
+
+** Known Issues
+- *Aider*: tree-sitter packages fail to build (=tree_sitter/parser.h= missing)
+- *OpenAI Codex CLI*: Explicit FreeBSD platform check in bin/codex.js throws error
+- *Goose*: Missing =langfuse.decorators= module after install
+
+** Workarounds
+- Use Docker/Podman for agents that don't support FreeBSD natively
+- Consider Linux compatibility layer (Linuxulator) for some tools
+- Pure Python agents may work if dependencies compile
+
 * See Also
 
 - [[https://github.com/anthropics/claude-code][Claude Code Repository]]
@@ -221,3 +258,7 @@ M-x efrit-doctor                 ; Health check
 - [[https://github.com/google-gemini/gemini-cli][Gemini CLI Repository]]
 - [[https://docs.github.com/en/copilot/using-github-copilot/using-github-copilot-in-the-command-line][GitHub Copilot CLI Docs]]
 - [[https://github.com/steveyegge/efrit][Efrit Repository]]
+- [[https://github.com/openai/codex][OpenAI Codex CLI Repository]]
+- [[https://github.com/block/goose][Goose Repository]]
+- [[https://github.com/OpenInterpreter/open-interpreter][Open Interpreter Repository]]
+- [[https://github.com/paul-gauthier/aider][Aider Repository]]

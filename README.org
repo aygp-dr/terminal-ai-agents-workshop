@@ -219,6 +219,28 @@ Contributions are welcome! Please:
 | [[https://ampcode.com][Amp]] | 0.0.1766347278 | Sourcegraph | CLI/Terminal | Code search, multi-repo context, Cody-based |
 | [[https://github.com/All-Hands-AI/OpenHands][OpenHands]] | - | Open Source | Terminal/Web | Full development capabilities, sandboxed execution |
 | [[https://github.com/steveyegge/efrit][Efrit]] | 0.4.1 | Steve Yegge | Emacs | Native Elisp agent, 35+ tools, Claude-powered |
+| [[https://github.com/openai/codex][OpenAI Codex CLI]] | 0.77.0 | OpenAI | CLI/Terminal | GPT-powered, file editing, sandboxed |
+| [[https://github.com/block/goose][Goose]] | 0.9.11 | Block/Square | CLI/Terminal | Local-first, offline support, extensible |
+| [[https://github.com/OpenInterpreter/open-interpreter][Open Interpreter]] | - | Open Source | CLI/Terminal | Code execution, multi-LLM, computer control |
+| [[https://github.com/cline/cline][Cline]] | - | Open Source | VS Code | Agentic coding, MCP tools, multi-provider |
+| [[https://github.com/opencode-ai/opencode][OpenCode]] | - | Open Source | CLI/Terminal | 75+ LLM providers, extensible |
+| [[https://aws.amazon.com/q/][Amazon Q CLI]] | - | AWS | CLI/Terminal | AWS ecosystem, enterprise security |
+
+*** FreeBSD Compatibility Notes
+
+Not all agents work on FreeBSD 14.3. Current status:
+
+| Agent | FreeBSD Status | Issue |
+|-------+----------------+-------|
+| Claude Code | ✅ Works | Native support |
+| Amp | ✅ Works | Native support |
+| Gemini CLI | ✅ Works | Native support |
+| GitHub Copilot CLI | ✅ Works | Via =gh= extension |
+| Efrit | ✅ Works | Pure Elisp |
+| Aider | ❌ Build fails | tree-sitter packages need =parser.h= |
+| OpenAI Codex CLI | ❌ Unsupported | Explicit FreeBSD check in code |
+| Goose | ⚠️ Dep issues | langfuse.decorators module missing |
+| Open Interpreter | 🔄 Testing | Large build, untested |
 
 *** Efrit - Native Emacs AI Agent
 
